@@ -9,6 +9,7 @@ import { MedicalServices } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
 import Checkbox from "@mui/material/Checkbox";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
 export default function Content(props) {
   const navigate = useNavigate();
@@ -23,8 +24,95 @@ export default function Content(props) {
   const [author, setAuthor] = useState("");
   const [comments, setComments] = useState({});
   const [acceptStatus, setAcceptStatus] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false); // State to manage dialog open/close
+  const [openCommentDialog, setOpenCommentDialog] = useState(false); // State to manage dialog open/close for comment reporting
+  const [selectedReason, setSelectedReason] = useState(""); // State to store selected report reason
+  const [selectedAnswerId, setSelectedAnswerId] = useState(""); // State to store the ID of the selected answer
+  const [selectedCommentId, setSelectedCommentId] = useState(""); // State to store the ID of the selected comment for reporting
 
-  const handleCheck = () => {}
+  const reportReasons = [
+    'Spam or Advertising',
+    'Offensive Language or Harassment',
+    'Inappropriate Content',
+    'Misinformation or Fake News',
+    'Impersonation',
+    'Copyright Infringement',
+    'Privacy Violation',
+    'Bullying or Intimidation',
+    'Irrelevant or Off-Topic'
+  ];
+
+  const handleOpenDialog = (answerId) => {
+    setOpenDialog(true);
+    setSelectedAnswerId(answerId);
+  };
+
+  const handleOpenCommentDialog = (commentId) => {
+    setOpenCommentDialog(true);
+    setSelectedCommentId(commentId);
+  };
+
+  const handleCloseDialog = (reason) => {
+    setOpenDialog(false);
+    if (reason === "") {
+      alert('Please select a reason for reporting the question.');
+      return;
+    }
+    fetch('http://localhost:8000/api/report/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        id: selectedAnswerId,
+        reason: reason,
+        type: "answer"
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Display alert with the message from the response
+        alert(data.message);
+        setSelectedReason(""); // Clear the selected reason
+      })
+      .catch(error => {
+        // Handle errors
+        console.error('Error reporting question:', error);
+        alert('An error occurred while reporting the question.');
+      });
+  };
+
+  const handleCloseCommentDialog = (reason) => {
+    setOpenCommentDialog(false);
+    if (reason === "") {
+      alert('Please select a reason for reporting the comment.');
+      return;
+    }
+    fetch('http://localhost:8000/api/report/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        id: selectedCommentId,
+        reason: reason,
+        type: "comment"
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Display alert with the message from the response
+        alert(data.message);
+        setSelectedReason(""); // Clear the selected reason
+      })
+      .catch(error => {
+        // Handle errors
+        console.error('Error reporting comment:', error);
+        alert('An error occurred while reporting the comment.');
+      });
+  };
 
   const isLoggedIn = () => {
     if (localStorage.getItem("username") !== null) {
@@ -198,13 +286,13 @@ export default function Content(props) {
     setQueVote(json);
     console.log(queVote);
   };
-  
+
   useEffect(() => {
     isLoggedIn();
     fetchQuestion(params.type);
     fetchAnswers(params.type);
     fetchQueVotes(params.type);
-  
+
     // Fetch comments for each answer when the component mounts
     answers.forEach((ans) => {
       fetchComments(ans.id);
@@ -262,22 +350,35 @@ export default function Content(props) {
       [answerId]: prevComments[answerId] ? undefined : [],
     }));
     setValue(""); // Clear the comment input value
-  
+
     // Fetch comments when the comment icon is clicked
     if (!comments[answerId]) {
       await fetchComments(answerId);
     }
   };
-  
+
+  const renderComment = (comment, answerId) => {
+    return (
+      <div key={comment.id} className="comment">
+        <strong>{comment.user.username}:</strong> {comment.comment}
+        <Tooltip title="Report comment" arrow>
+          <button
+            className="ml-2"
+            style={{ background: "none", border: "none", padding: "unset" }}
+            onClick={() => handleOpenCommentDialog(comment.id)}
+          >
+            <Report style={{ color: "black" }} />
+          </button>
+        </Tooltip>
+      </div>
+    );
+  };
+
   const renderComments = (answerId) => {
     const answerComments = comments[answerId] || [];
     return (
       <div>
-        {answerComments.map((comment, index) => (
-          <div key={index} className="comment">
-            <strong>{comment.user.username}:</strong>{comment.comment}
-          </div>
-        ))}
+        {answerComments.map((comment) => renderComment(comment, answerId))}
       </div>
     );
   };
@@ -285,24 +386,24 @@ export default function Content(props) {
   const renderCommentForm = (answerId) => {
     return (
       <form onSubmit={(e) => addComment(e, answerId)} style={{ display: "flex", alignItems: "flex-start" }}>
-  <input
-    type="text"
-    className="comment-input mr-2"
-    placeholder="Add your comment.."
-    value={value}
-    onChange={getValue}
-    style={{
-      fontSize: "15px",
-      border: "2px solid black",
-      borderRadius: "5px",
-      height: "30px",      
-      padding: "5px"}}
-  ></input>
-  <button type="submit" className="btn btn-primary" style={{ height: "30px" }}>
-    Add Comment
-  </button>
-</form>
-
+        <input
+          type="text"
+          className="comment-input mr-2"
+          placeholder="Add your comment.."
+          value={value}
+          onChange={getValue}
+          style={{
+            fontSize: "15px",
+            border: "2px solid black",
+            borderRadius: "5px",
+            height: "30px",
+            padding: "5px"
+          }}
+        ></input>
+        <button type="submit" className="btn btn-primary" style={{ height: "30px" }}>
+          Add Comment
+        </button>
+      </form>
     );
   };
 
@@ -325,10 +426,7 @@ export default function Content(props) {
       </div>
     );
   };
-  
-  
-  
-  
+
   return (
     <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white">
       <div className="stack-index">
@@ -337,59 +435,61 @@ export default function Content(props) {
           <div Style="height:100vh;width:70%;display:block;">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column">
-                <strong style={{fontSize:"25px"}}>Title: {question.title}</strong>
-                <div style={{fontSize:"20px"}}><strong style={{fontSize:"25px"}}>Posted by:</strong>{author}</div>
-                <strong style={{fontSize:"25px"}} className="mt-3">Description:</strong>
-                <div style={{fontSize:"20px"}}>{question.description}</div>
+                <strong style={{ fontSize: "25px" ,color:"#00008B"}}>Title: {question.title}</strong>
+                <div style={{ fontSize: "20px" }}>
+                  <strong style={{ fontSize: "25px" ,color:"#00008B"}}>Posted by:</strong>{author}
+                </div>
+                <strong style={{ fontSize: "25px" ,color:"#00008B"}} className="mt-3">Description:</strong>
+                <div style={{ fontSize: "20px" }}>{question.description}</div>
               </div>
             </div>
             <div className="mt-5">
-              {answers.length == 0 ? <strong style={{fontSize:"25px"}}>No Answers</strong> : <></>}
-              {answers.length == 1 ? <strong style={{fontSize:"25px"}}>1 Answer</strong> : <></>}
-              {answers.length > 1 ? <strong style={{fontSize:"25px"}}>{answers.length} Answers</strong> : <></>}
+              {answers.length == 0 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>No Answers</strong> : <></>}
+              {answers.length == 1 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>1 Answer</strong> : <></>}
+              {answers.length > 1 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>{answers.length} Answers</strong> : <></>}
             </div>
             {answers.length > 0 && (
-            <div className="mt-3">
+              <div className="mt-3">
                 {answers.map((ans) => (
                   <div className="mb-2 mt-2">
                     <div className="d-flex flex-row">
-                      <div className="d-flex flex-column" style={{marginRight:"30px"}}>
-                          <IconButton className="btn " id={"ansupvotebtn" + ans.id} onClick={(e) => upvote(e, ans.id)}>
-                            <ArrowDropUp style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
-                          </IconButton>
+                      <div className="d-flex flex-column" style={{ marginRight: "30px" }}>
+                        <IconButton className="btn " id={"ansupvotebtn" + ans.id} onClick={(e) => upvote(e, ans.id)}>
+                          <ArrowDropUp style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
+                        </IconButton>
                         <div className="mx-3"><strong>{ans.votes}</strong></div>
-                          <IconButton className="btn" id={"ansdownvotebtn" + ans.id} onClick={(e) => downvote(e, ans.id)}>
-                            <ArrowDropDown style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
-                          </IconButton>
+                        <IconButton className="btn" id={"ansdownvotebtn" + ans.id} onClick={(e) => downvote(e, ans.id)}>
+                          <ArrowDropDown style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
+                        </IconButton>
                       </div>
                       <div className="d-flex flex-column justify-content-center">
                         <div className="d-flex flex-row">
                           <div>
-                            <div style={{fontSize:"20px"}} className="mb-4"><strong Style="font-size:25px;">Answered by: </strong>{ans.user.is_staff  && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices /></Tooltip></> }</div>
-                            <div>{ans.is_accepted && <strong style={{fontSize:"25px"}}><CheckCircle style={{color:"green"}} size="large" />Accepted Solution</strong>}</div> 
-                            <strong style={{fontSize:"25px"}}>Solution</strong><div style={{fontSize:"20px"}} className="mb-4">{ans.solution}</div>
+                            <div style={{ fontSize: "20px" }} className="mb-4"><strong Style="font-size:25px;color:#00008B">Answered by: </strong>{ans.user.is_staff && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices style={{color:"red"}} /></Tooltip></>}</div>
+                            <div>{ans.is_accepted && <strong style={{ fontSize: "25px",color:"#00008B" }}><CheckCircle style={{ color: "green" }} size="large" />Accepted</strong>}</div>
+                            <strong style={{ fontSize: "25px",color:"#00008B" }}>Solution</strong><div style={{ fontSize: "20px" }} className="mb-4">{ans.solution}</div>
                             <div className="d-flex flex-row">
                               {localStorage.getItem("username") === author && (
                                 <>
-                                {ans.is_accepted ? (
-                                  <Checkbox checked  onClick={(e)=>handleReject(e,ans.id)}/>
-                                ) : (
-                                  <Checkbox  onClick={(e)=>handleAccept(e,ans.id)}/>
-                                )}
+                                  {ans.is_accepted ? (
+                                    <Checkbox checked onClick={(e) => handleReject(e, ans.id)} />
+                                  ) : (
+                                    <Checkbox onClick={(e) => handleAccept(e, ans.id)} />
+                                  )}
                                 </>
                               )}
                               {renderCommentIcon(ans.id)}
                               <Tooltip title="Report answer" arrow>
-                              <button className="mr-2" style={{ background: "none", border:"none", padding: "unset" }}>
-                                <Report style={{ color: "black" }} />
-                              </button>
+                                <button className="mr-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenDialog(ans.id)}>
+                                  <Report style={{ color: "black" }} />
+                                </button>
                               </Tooltip>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <hr style={{height:"2px",backgroundColor:"black"}}></hr>
+                    <hr style={{ height: "2px", backgroundColor: "black" }}></hr>
                   </div>
                 ))}
               </div>
@@ -397,7 +497,7 @@ export default function Content(props) {
             {console.log(question)}
             {localStorage.getItem("username") !== author && (
               <div className="mt-4">
-                <strong style={{fontSize:"25px"}}>Your Answer</strong>
+                <strong style={{ fontSize: "25px",color:"#00008B" }}>Your Answer</strong>
                 <form
                   onSubmit={(e) => handleSubmit(e, question.id)}
                   method="POST"
@@ -410,7 +510,7 @@ export default function Content(props) {
                     cols={100}
                     name="answer"
                     onChange={getValue}
-                    style={{fontSize:"20px",border:"2px solid black",borderRadius:"5px"}}
+                    style={{ fontSize: "20px", border: "2px solid black", borderRadius: "5px" }}
                   ></textarea>
                   <br></br>
                   {loginstatus === true ? (
@@ -426,6 +526,42 @@ export default function Content(props) {
           </div>
         </div>
       </div>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Report Question</DialogTitle>
+        <DialogContent>
+          <p>Select a reason for reporting:</p>
+          <select onChange={(e) => setSelectedReason(e.target.value)}>
+            <option value="">Select reason...</option>
+            {reportReasons.map((reason, index) => (
+              <option key={index} value={reason}>{reason}</option>
+            ))}
+          </select>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={() => handleCloseDialog(selectedReason)} variant="contained" autoFocus>
+            Report
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openCommentDialog} onClose={() => setOpenCommentDialog(false)}>
+        <DialogTitle>Report Comment</DialogTitle>
+        <DialogContent>
+          <p>Select a reason for reporting:</p>
+          <select onChange={(e) => setSelectedReason(e.target.value)}>
+            <option value="">Select reason...</option>
+            {reportReasons.map((reason, index) => (
+              <option key={index} value={reason}>{reason}</option>
+            ))}
+          </select>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenCommentDialog(false)}>Cancel</Button>
+          <Button onClick={() => handleCloseCommentDialog(selectedReason)} variant="contained" autoFocus>
+            Report
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

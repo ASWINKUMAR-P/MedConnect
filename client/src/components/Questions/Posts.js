@@ -1,17 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import parse from 'html-react-parser';
-// import Sidebar from '../Sidebar/Sidebar';
-import './questions.css';
-// import { FilterList } from '@mui/icons-material';
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { Report } from '@mui/icons-material';
-import { Tooltip } from '@mui/material';
+import './questions.css';
 
 export default function Posts({ posts }) {
-
     const [noOfAns, setnoOfAns] = useState({});
     const [vote, setVotes] = useState({});
-    // This function will find the count of No. of answer for a perticular Question
+    const [openDialog, setOpenDialog] = useState(false); // State to manage dialog open/close
+    const [selectedReason, setSelectedReason] = useState(""); // State to store selected report reason
+    const [selectedQuestionId, setSelectedQuestionId] = useState(""); // State to store the ID of the selected question
+
+    // Array of report reasons
+    const reportReasons = [
+        'Spam or Advertising',
+        'Offensive Language or Harassment',
+        'Inappropriate Content',
+        'Misinformation or Fake News',
+        'Impersonation',
+        'Copyright Infringement',
+        'Privacy Violation',
+        'Bullying or Intimidation',
+        'Irrelevant or Off-Topic'
+    ];
+
     const FindFrequencyOfAns = async () => {
         const response = await fetch("http://localhost:8000/api/getNoOfAnswersForAll", {
             method: "GET",
@@ -23,6 +35,7 @@ export default function Posts({ posts }) {
         setnoOfAns(json);
         console.log(json);
     }
+
     const fetchVotes = async () => {
         const response = await fetch(`http://localhost:8000/api/getAllQuestionVotes`, {
             method: 'GET',
@@ -34,29 +47,61 @@ export default function Posts({ posts }) {
         let json = await response.json();
         setVotes(json);
     }
+
     useEffect(() => {
         FindFrequencyOfAns();
         fetchVotes();
     }, [])
+
+    const handleOpenDialog = (questionId) => {
+        setOpenDialog(true);
+        setSelectedQuestionId(questionId);
+    };
+
+    const handleCloseDialog = (reason) => {
+        setOpenDialog(false);
+        if(reason === "") {
+            alert('Please select a reason for reporting the question.');
+            return;
+        }
+        fetch('http://localhost:8000/api/report/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                id: selectedQuestionId,
+                reason: reason,
+                type: "question"
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display alert with the message from the response
+            alert(data.message);
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('Error reporting question:', error);
+            alert('An error occurred while reporting the question.');
+        });
+    };
+
     return (
         <>
             <ul>
                 {posts.map(question => (
-                    <div className="all-questions">
+                    <div className="all-questions" key={question.id}>
                         <div className="all-questions-container">
                             <div className="all-questions-left">
                                 <div className="all-options">
                                     <div className="all-option">
-                                        {(
-                                            () => {
-                                                if (question.id in noOfAns) {
-                                                    return (<p>{noOfAns[question.id]}</p>);
-                                                }
-                                                else {
-                                                    return (<>0</>);
-                                                }
-                                            }
-                                        )()}
+                                        {question.id in noOfAns ? (
+                                            <p>{noOfAns[question.id]}</p>
+                                        ) : (
+                                            <>0</>
+                                        )}
                                         <span>Answers</span>
                                     </div>
                                     <div className="all-option">
@@ -68,15 +113,15 @@ export default function Posts({ posts }) {
                                 <div style={{ width: "90%" }}>
                                     <div>{question.description}</div>
                                 </div>
-                                <div className='mt-3'>{question.tags.map(tag => <NavLink to={{ pathname: `/questionOntags/${tag.name}` }} className='question-tags' Style="text-decoration:none; color:hsl(205,47%,42%); background-color: hsl(205,46%,92%); border-radius:5px;">{tag.name}</NavLink>)}</div>
-                                <Tooltip title="Report question" className='mt-2' style={{width:"fit-content"}} arrow>
-                                    <div className='d-flex'> 
-                                    <button className="mr-2 mt-2 d-flex" style={{ background: "none", border:"none", padding: "unset",width:"fit-content" }}>
-                                        <Report style={{ color: "black" }} /> 
-                                     </button>
-                                     <div className='d-flex mt-2'>Report question</div>
-                                     </div>
-                              </Tooltip>
+                                <div className='mt-3'>{question.tags.map((tag, index) => <NavLink key={index} to={{ pathname: `/questionOntags/${tag.name}` }} className='question-tags' Style="text-decoration:none; color:hsl(205,47%,42%); background-color: hsl(205,46%,92%); border-radius:5px;">{tag.name}</NavLink>)}</div>
+                                <Tooltip title="Report question" className='mt-2' style={{ width: "fit-content" }} arrow>
+                                    <div className='d-flex'>
+                                        <button className="mr-2 mt-2 d-flex" style={{ background: "none", border: "none", padding: "unset", width: "fit-content" }} onClick={() => handleOpenDialog(question.id)}>
+                                            <Report style={{ color: "black" }} />
+                                        </button>
+                                        <div className='d-flex mt-2'>Report question</div>
+                                    </div>
+                                </Tooltip>
                                 <div className="author">
                                     <small className='d-flex flex-row-reverse'>{question.user.username} asked this at {question.created_at} </small>
                                 </div>
@@ -85,6 +130,24 @@ export default function Posts({ posts }) {
                     </div>
                 ))}
             </ul>
+
+            {/* Dialog component */}
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Report Question</DialogTitle>
+                <DialogContent>
+                    <p>Select a reason for reporting:</p>
+                    <select onChange={(e) => setSelectedReason(e.target.value)}>
+                        <option value="">Select reason...</option>
+                        {reportReasons.map((reason, index) => (
+                            <option key={index} value={reason}>{reason}</option>
+                        ))}
+                    </select>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                    <Button onClick={() => handleCloseDialog(selectedReason)}>Report</Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

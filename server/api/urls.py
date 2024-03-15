@@ -60,4 +60,6 @@ urlpatterns = [
     path('getComments/<int:pk>/',getCommentsByAnswerId, name="getComments"),
     path('addComment/<int:pk>/',addComment, name="addComment"),
 
+    path('report/',report, name="report"),
+
 ]

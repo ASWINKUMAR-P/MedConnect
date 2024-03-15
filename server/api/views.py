@@ -659,3 +659,25 @@ def rejectRequest(request,pk):
     user.save()
     proof.save()
     return Response(status=200,data={"message": "Proof rejected successfully"})
+
+@api_view(["POST"])
+def report(request):
+    report_content = request.data.get("reason")
+    question = None
+    answer = None
+    comment = None
+    user = request.user
+    if request.data.get("type") == "question":
+        qid = request.data.get("id")
+        question = Question.objects.get(id=qid)
+    if request.data.get("type") == "answer":
+        aid = request.data.get("id")
+        answer = Answer.objects.get(id=aid)
+    if request.data.get("type") == "comment":
+        cid = request.data.get("id")
+        comment = Comment.objects.get(id=cid)
+    
+    report = Report.objects.create(user=user,report_content=request.data.get("type"), question=question, answer=answer, comment=comment,reason=report_content)
+    report.save()
+    return Response(status=200,data={"message": "Reported successfully"})
+    

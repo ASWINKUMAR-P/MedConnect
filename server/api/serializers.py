@@ -110,3 +110,19 @@ class ProofSerializer(serializers.ModelSerializer):
         created_at = instance.created_at
         representation['created_at'] = convertDateToString(created_at)
         return representation
+
+class ReportSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    jsdate = serializers.SerializerMethodField()
+    class Meta:
+        model = Report
+        fields = "__all__"
+    
+    def get_jsdate(self, obj):
+        return obj.created_at.strftime('%Y-%m-%d')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        created_at = instance.created_at
+        representation['created_at'] = convertDateToString(created_at)
+        return representation
