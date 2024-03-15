@@ -10,6 +10,7 @@ var iconstyle = {
 };
 var title = {
   color: "#0D6EFD",
+  fontWeight:"bold"
 };
 
 export default function Navbar() {

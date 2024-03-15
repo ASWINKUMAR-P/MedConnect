@@ -68,7 +68,7 @@ function Login() {
           </div>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <input type="email" className="form-control" placeholder="Username" name="email" onChange={onChange}/>
+              <input type="email" className="form-control" placeholder="Email-id" name="email" onChange={onChange}/>
             </div>
             <div className="form-group">
               <input type="password" className="form-control" placeholder="Password" name="password" onChange={onChange}/>
