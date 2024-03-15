@@ -1,0 +1,61 @@
+.stack-index {
+   display: flex;
+   min-height: 85vh;
+   min-width:  fit-content;
+}
+
+.stack-index-content {
+   display:flex;
+   width: 100%;
+}
+/* Sidebar.css */
+.sidebar {
+   display: flex;
+   flex-direction: column;
+   padding: 10px 0px 10px 10px;
+   height: 100vh;
+   flex: 0.5;
+   max-width: 200px;
+   margin-right: 20px;
+   border-right: 1px solid #ddd;
+}
+
+.sidebar-container {
+   margin: 10px 10px;
+}
+
+.sidebar-option {
+   margin: 10px 0;
+   display: flex;
+   align-items: center; /* Align items vertically */
+   border-radius: 5px;
+   transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-option a {
+   text-decoration: none;
+   color: #000;
+   font-size: 14px;
+   margin-left: 10px; /* Add some space between icon and text */
+   padding: 8px 12px;
+}
+
+.sidebar-option:hover,
+.sidebar-option.side-active {
+   background-color: #0151f0;
+   color: white;
+}
+.sidebar-option.side-active a {
+   color: white;
+}
+
+/* Add styles for icons */
+.sidebar-option svg {
+   font-size: 20px;
+   margin-right: 10px; /* Add some space between icon and text */
+}
+
+/* Add gap between each row */
+.sidebar-option:not(:last-child) {
+   margin-bottom: 15px; /* Adjust as needed */
+}
