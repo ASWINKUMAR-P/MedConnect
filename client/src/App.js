@@ -17,11 +17,9 @@ import UpdateAnswer from './components/MyProfile/MyAnswers/UpdateAnswer';
 import MyAnswers from './components/MyProfile/MyAnswers/MyAnswers';
 import Analysis from './components/MyProfile/Analysis/Analysis';
 import Tags from './components/Tags/Tags';
-import AdminAnalysis from './components/Admin/analysis';
 import QuestionOnTags from './components/Tags/QuestionOnTags';
 import Search from './components/Questions/Search';
 import AdminQuestions from './components/Admin/Questions/Adminquestion';
-import AdminHome from './components/Admin/AdminHome';
 import Adminanswer from './components/Admin/Answers/AdminAnswer';
 import UserProfileAnalysis from './components/Admin/Users/UserProfileAnalysis';
 import ShowProfile from './components/MyProfile/Profile/ShowProfile';
@@ -54,8 +52,6 @@ function App() {
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/tags" element={<Tags />} />
           {/* admin routes */}
-          <Route path="/adminHome" element={<AdminHome />} />
-          <Route path="/adminanalysis" element={<AdminAnalysis />} />
           <Route path="/adminquestions" element={<AdminQuestions />} />
           <Route path="/adminanswer" element={<Adminanswer />} />
           <Route path="/adminuser" element={<AdminUser />} />
