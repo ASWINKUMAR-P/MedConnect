@@ -64,9 +64,6 @@ export default function UploadProof() {
 
   return (
     <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-      <div className='stack-index'>
-        <div className='stack-index-content'>
-          <Sidebar />
           <div className="main d-flex align-items-center">
             {
               pendingRequest ? <strong>You still have an pending request!!!</strong>
@@ -93,7 +90,5 @@ export default function UploadProof() {
             }
           </div>
         </div>
-      </div>
-    </div>
   );
 }

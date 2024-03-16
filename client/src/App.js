@@ -27,12 +27,16 @@ import EditProfile from './components/MyProfile/Profile/EditProfile';
 import UploadProof from './components/MyProfile/Profile/UploadProof';
 import ViewRequests from './components/Admin/DoctorVerification/ViewRequests';
 import ViewDocs from './components/Admin/DoctorVerification/ViewDocs';
+import Sidebar from './components/Sidebar/Sidebar';
+import AdminSidebar from './components/Admin/AdminSidebar';
+import { Home } from '@mui/icons-material';
 
 function App() {
+  const usertype = localStorage.getItem('usertype');
   return (
-    <div className="main-app" Sytle="display:flex;flex-direction:column;flex-wrap:wrap;">
       <BrowserRouter>
         <Navbar />
+        {usertype == 'admin' ? <AdminSidebar /> : (usertype == 'user' ? <Sidebar /> : <Homepage/>)}
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/ask" element={<Editor />} />
@@ -67,7 +71,6 @@ function App() {
         </Routes>
         {/* <Footer /> */}
       </BrowserRouter>
-    </div>
   );
 }
 

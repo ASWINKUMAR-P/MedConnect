@@ -18,6 +18,9 @@ function Homepage() {
         if (localStorage.getItem('usertype') === 'admin') {
             navigate('/adminuser')
         }
+        else if(localStorage.getItem('usertype') === 'user'){
+            navigate('/questions')
+        }
     }
     
     useEffect(() => {

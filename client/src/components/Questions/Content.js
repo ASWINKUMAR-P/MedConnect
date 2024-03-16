@@ -24,11 +24,11 @@ export default function Content(props) {
   const [author, setAuthor] = useState("");
   const [comments, setComments] = useState({});
   const [acceptStatus, setAcceptStatus] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false); // State to manage dialog open/close
-  const [openCommentDialog, setOpenCommentDialog] = useState(false); // State to manage dialog open/close for comment reporting
-  const [selectedReason, setSelectedReason] = useState(""); // State to store selected report reason
-  const [selectedAnswerId, setSelectedAnswerId] = useState(""); // State to store the ID of the selected answer
-  const [selectedCommentId, setSelectedCommentId] = useState(""); // State to store the ID of the selected comment for reporting
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openCommentDialog, setOpenCommentDialog] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [selectedAnswerId, setSelectedAnswerId] = useState("");
+  const [selectedCommentId, setSelectedCommentId] = useState("");
 
   const reportReasons = [
     'Spam or Advertising',
@@ -69,18 +69,14 @@ export default function Content(props) {
         reason: reason,
         type: "answer"
       }),
-    })
-      .then(response => response.json())
+    }).then(response => response.json())
       .then(data => {
-        // Display alert with the message from the response
         alert(data.message);
-        setSelectedReason(""); // Clear the selected reason
-      })
-      .catch(error => {
-        // Handle errors
+        setSelectedReason("");
+    }).catch(error => {
         console.error('Error reporting question:', error);
         alert('An error occurred while reporting the question.');
-      });
+    });
   };
 
   const handleCloseCommentDialog = (reason) => {
@@ -103,12 +99,10 @@ export default function Content(props) {
     })
       .then(response => response.json())
       .then(data => {
-        // Display alert with the message from the response
         alert(data.message);
-        setSelectedReason(""); // Clear the selected reason
+        setSelectedReason("");
       })
       .catch(error => {
-        // Handle errors
         console.error('Error reporting comment:', error);
         alert('An error occurred while reporting the comment.');
       });
@@ -280,7 +274,6 @@ export default function Content(props) {
         },
       }
     );
-
     let json = await response.json();
     console.log(json);
     setQueVote(json);
@@ -292,11 +285,7 @@ export default function Content(props) {
     fetchQuestion(params.type);
     fetchAnswers(params.type);
     fetchQueVotes(params.type);
-
-    // Fetch comments for each answer when the component mounts
-    answers.forEach((ans) => {
-      fetchComments(ans.id);
-    });
+    answers.forEach((ans) => {fetchComments(ans.id);});
   }, [voteStatus, state, acceptStatus]);
 
   const fetchComments = async (answerId) => {
@@ -326,12 +315,11 @@ export default function Content(props) {
       });
       const json = await response.json();
       if (json["status"] === "true") {
-        // Update comments state with the new comment
         setComments((prevComments) => ({
           ...prevComments,
           [answerId]: [...(prevComments[answerId] || []), json.comment],
         }));
-        setValue(""); // Clear input field
+        setValue("");
         alert("Your comment is added successfully");
         window.location.reload(true);
       } else {
@@ -344,14 +332,11 @@ export default function Content(props) {
   };
 
   const toggleComments = async (answerId) => {
-    // Toggle the comment box and form
     setComments((prevComments) => ({
       ...prevComments,
       [answerId]: prevComments[answerId] ? undefined : [],
     }));
-    setValue(""); // Clear the comment input value
-
-    // Fetch comments when the comment icon is clicked
+    setValue("");
     if (!comments[answerId]) {
       await fetchComments(answerId);
     }
@@ -362,11 +347,7 @@ export default function Content(props) {
       <div key={comment.id} className="comment">
         <strong>{comment.user.username}:</strong> {comment.comment}
         <Tooltip title="Report comment" arrow>
-          <button
-            className="ml-2"
-            style={{ background: "none", border: "none", padding: "unset" }}
-            onClick={() => handleOpenCommentDialog(comment.id)}
-          >
+          <button className="ml-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenCommentDialog(comment.id)}>
             <Report style={{ color: "black" }} />
           </button>
         </Tooltip>
@@ -386,41 +367,40 @@ export default function Content(props) {
   const renderCommentForm = (answerId) => {
     return (
       <form onSubmit={(e) => addComment(e, answerId)} style={{ display: "flex", alignItems: "flex-start" }}>
-        <input
-          type="text"
-          className="comment-input mr-2"
-          placeholder="Add your comment.."
-          value={value}
-          onChange={getValue}
-          style={{
-            fontSize: "15px",
-            border: "2px solid black",
-            borderRadius: "5px",
-            height: "30px",
-            padding: "5px"
-          }}
-        ></input>
-        <button type="submit" className="btn btn-primary" style={{ height: "30px" }}>
-          Add Comment
-        </button>
+        <input type="text" className="comment-input mr-2" placeholder="Add your comment.." value={value} onChange={getValue} style={{fontSize: "15px",border: "2px solid black",borderRadius: "5px",height: "30px",padding: "5px"}}/>
+        <button type="submit" className="btn btn-primary" style={{ height: "30px" }}>Add Comment</button>
       </form>
     );
   };
 
-  const renderCommentIcon = (ansid) => {
+  const renderCommentIcon = (ans) => {
     return (
-      <div className="comment-section mt-2">
+      <div className="comment-section mt-2 mr-2 ml-2">
+        {localStorage.getItem("username") === author && (
+          <>
+            {ans.is_accepted ? (
+              <Checkbox color="success" checked onClick={(e) => handleReject(e, ans.id)} />
+            ) : (
+              <Checkbox color="secondary" onClick={(e) => handleAccept(e, ans.id)} />
+            )}
+          </>
+        )}
         <Tooltip title="Comment box" arrow>
-          <button onClick={() => toggleComments(ansid)} className="mr-2" style={{ background: "none", border: "1px solid white", padding: "unset" }}>
+          <button onClick={() => toggleComments(ans.id)} className="mr-2" style={{ background: "none", border: "1px solid white", padding: "unset" }}>
             <CommentIcon style={{ color: "black" }} />
           </button>
         </Tooltip>
-        {comments[ansid] && (
+        <Tooltip title="Report answer" arrow>
+          <button className="mr-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenDialog(ans.id)}>
+            <Report style={{ color: "black" }} />
+          </button>
+        </Tooltip>
+        {comments[ans.id] && (
           <div>
-            {comments[ansid].length > 0 && (
-              <div className="comments">{renderComments(ansid)}</div>
+            {comments[ans.id].length > 0 && (
+              <div className="comments">{renderComments(ans.id)}</div>
             )}
-            <div className="comment-form">{comments[ansid] && renderCommentForm(ansid)}</div>
+            <div className="comment-form">{comments[ans.id] && renderCommentForm(ans.id)}</div>
           </div>
         )}
       </div>
@@ -428,25 +408,22 @@ export default function Content(props) {
   };
 
   return (
-    <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white">
-      <div className="stack-index">
-        <div className="stack-index-content">
-          <Sidebar />
+    <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white;margin-left:200px">
           <div Style="height:100vh;width:70%;display:block;">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column">
-                <strong style={{ fontSize: "25px" ,color:"#00008B"}}>Title: {question.title}</strong>
-                <div style={{ fontSize: "20px" }}>
-                  <strong style={{ fontSize: "25px" ,color:"#00008B"}}>Posted by:</strong>{author}
+                <strong style={{color:"#00008B"}}>Title: {question.title}</strong>
+                <div>
+                  <strong style={{color:"#00008B"}}>Posted by:</strong>{author}
                 </div>
-                <strong style={{ fontSize: "25px" ,color:"#00008B"}} className="mt-3">Description:</strong>
-                <div style={{ fontSize: "20px" }}>{question.description}</div>
+                <strong style={{color:"#00008B"}} className="mt-3">Description:</strong>
+                <div>{question.description}</div>
               </div>
             </div>
             <div className="mt-5">
-              {answers.length == 0 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>No Answers</strong> : <></>}
-              {answers.length == 1 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>1 Answer</strong> : <></>}
-              {answers.length > 1 ? <strong style={{ fontSize: "25px",color:"#00008B" }}>{answers.length} Answers</strong> : <></>}
+              {answers.length == 0 ? <strong style={{ color:"#00008B" }}>No Answers</strong> : <></>}
+              {answers.length == 1 ? <strong style={{ color:"#00008B" }}>1 Answer</strong> : <></>}
+              {answers.length > 1 ? <strong style={{ color:"#00008B" }}>{answers.length} Answers</strong> : <></>}
             </div>
             {answers.length > 0 && (
               <div className="mt-3">
@@ -454,36 +431,28 @@ export default function Content(props) {
                   <div className="mb-2 mt-2">
                     <div className="d-flex flex-row">
                       <div className="d-flex flex-column" style={{ marginRight: "30px" }}>
-                        <IconButton className="btn " id={"ansupvotebtn" + ans.id} onClick={(e) => upvote(e, ans.id)}>
-                          <ArrowDropUp style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
+                        <Tooltip title="Upvote" arrow>
+                        <IconButton className="btn p-0" id={"ansupvotebtn" + ans.id} onClick={(e) => upvote(e, ans.id)}>
+                          <ArrowDropUp style={{ color: "black", fontWeight: "bold"}} sx={{ fontSize: 50 }}/>
                         </IconButton>
-                        <div className="mx-3"><strong>{ans.votes}</strong></div>
-                        <IconButton className="btn" id={"ansdownvotebtn" + ans.id} onClick={(e) => downvote(e, ans.id)}>
-                          <ArrowDropDown style={{ color: "black", fontWeight: "bold" }} fontSize="30px" />
+                        </Tooltip>
+                        <div className="d-flex justify-content-center"><strong style={{fontSize:"20px"}}>{ans.votes}</strong></div>
+                        <Tooltip title="Downvote" arrow>
+                        <IconButton className="btn p-0" id={"ansdownvotebtn" + ans.id} onClick={(e) => downvote(e, ans.id)}>
+                          <ArrowDropDown style={{ color: "black", fontWeight: "bold"}} sx={{ fontSize: 50 }}/>
                         </IconButton>
+                        </Tooltip>
+                        <div className="mt-3 d-flex justify-content-center">
+                          {ans.is_accepted && <Tooltip title="Accepted answer" arrow><CheckCircle style={{ color: "green", fontSize: "30px" }} /></Tooltip> }
+                        </div>
                       </div>
                       <div className="d-flex flex-column justify-content-center">
                         <div className="d-flex flex-row">
                           <div>
-                            <div style={{ fontSize: "20px" }} className="mb-4"><strong Style="font-size:25px;color:#00008B">Answered by: </strong>{ans.user.is_staff && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices style={{color:"red"}} /></Tooltip></>}</div>
-                            <div>{ans.is_accepted && <strong style={{ fontSize: "25px",color:"#00008B" }}><CheckCircle style={{ color: "green" }} size="large" />Accepted</strong>}</div>
-                            <strong style={{ fontSize: "25px",color:"#00008B" }}>Solution</strong><div style={{ fontSize: "20px" }} className="mb-4">{ans.solution}</div>
+                            <div className="mb-4"><strong Style="color:#00008B">Answered by: </strong>{ans.user.is_staff && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices style={{color:"red"}} /></Tooltip></>}</div>
+                            <strong style={{ color:"#00008B" }}>Solution</strong><div className="mb-4">{ans.solution}</div>
                             <div className="d-flex flex-row">
-                              {localStorage.getItem("username") === author && (
-                                <>
-                                  {ans.is_accepted ? (
-                                    <Checkbox checked onClick={(e) => handleReject(e, ans.id)} />
-                                  ) : (
-                                    <Checkbox onClick={(e) => handleAccept(e, ans.id)} />
-                                  )}
-                                </>
-                              )}
-                              {renderCommentIcon(ans.id)}
-                              <Tooltip title="Report answer" arrow>
-                                <button className="mr-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenDialog(ans.id)}>
-                                  <Report style={{ color: "black" }} />
-                                </button>
-                              </Tooltip>
+                              {renderCommentIcon(ans)}
                             </div>
                           </div>
                         </div>
@@ -497,7 +466,7 @@ export default function Content(props) {
             {console.log(question)}
             {localStorage.getItem("username") !== author && (
               <div className="mt-4">
-                <strong style={{ fontSize: "25px",color:"#00008B" }}>Your Answer</strong>
+                <strong style={{ color:"#00008B" }}>Your Answer</strong>
                 <form
                   onSubmit={(e) => handleSubmit(e, question.id)}
                   method="POST"
@@ -510,7 +479,7 @@ export default function Content(props) {
                     cols={100}
                     name="answer"
                     onChange={getValue}
-                    style={{ fontSize: "20px", border: "2px solid black", borderRadius: "5px" }}
+                    style={{ border: "2px solid black", borderRadius: "5px" }}
                   ></textarea>
                   <br></br>
                   {loginstatus === true ? (
@@ -524,8 +493,6 @@ export default function Content(props) {
               </div>
             )}
           </div>
-        </div>
-      </div>
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Report Question</DialogTitle>
         <DialogContent>

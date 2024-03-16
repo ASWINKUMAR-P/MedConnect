@@ -52,51 +52,44 @@ export default function Questions() {
     const currentPosts = questions.slice(indexOfFirstPost, indexOfLastPost);
 
     return (
-        <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-            <div className="stack-index">
-                <div className="stack-index-content" >
-                    <Sidebar/>
-                    <div className="main">
-                        <div className="main-container">
-                            <div className='md-5'>
-                                <div className="d-flex" style={{ width: 500 }}>
-                                <input className="form-control me-2" id="searchQue" type="search" placeholder="Search" aria-label="Search" value={searchQuery} onChange={handleSearchInputChange}/>
-                                <div className="main-filter">
-                                    <div className="main-tabs">
-                                    <button
-                                    className={`main-tab ${activeTab === 'all' ? 'active' : ''}`}
-                                    onClick={() => handleTabClick('all')}
-                                    >
-                                        All
-                                    </button>
-                                    <button
-                                        className={`main-tab ${activeTab === 'answered' ? 'active' : ''}`}
-                                        onClick={() => handleTabClick('answered')}
-                                    >
-                                        Answered
-                                    </button>
-                                    <button
-                                        className={`main-tab ${activeTab === 'unanswered' ? 'active' : ''}`}
-                                        onClick={() => handleTabClick('unanswered')}
-                                    >
-                                        Unanswered
-                                    </button>
-                                    </div>
-                                </div></div>
-                            </div>
-                            <div className='main-desc'>
-                                <p>{questions.length} Questions</p>
-                            </div>
-                            <div className="questions">
-                                <div className="question">
-                                    <Posts posts={currentPosts} />
-                                </div>
-                            </div>
-                            <div className="container">
-                                <Pagination postsPerPage={postPerPage} totalPosts={questions.length} paginate={paginate} />
-                            </div>
+        <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white",marginLeft:"250px" }}>
+            <div className="main-container">
+                <div className='md-5'>
+                    <div className="d-flex" style={{ width: 500 }}>
+                    <input className="form-control me-2" id="searchQue" type="search" placeholder="Search" aria-label="Search" value={searchQuery} onChange={handleSearchInputChange}/>
+                    <div className="main-filter">
+                        <div className="main-tabs">
+                        <button
+                        className={`main-tab ${activeTab === 'all' ? 'active' : ''}`}
+                        onClick={() => handleTabClick('all')}
+                        >
+                            All
+                        </button>
+                        <button
+                            className={`main-tab ${activeTab === 'answered' ? 'active' : ''}`}
+                            onClick={() => handleTabClick('answered')}
+                        >
+                            Answered
+                        </button>
+                        <button
+                            className={`main-tab ${activeTab === 'unanswered' ? 'active' : ''}`}
+                            onClick={() => handleTabClick('unanswered')}
+                        >
+                            Unanswered
+                        </button>
                         </div>
+                    </div></div>
+                </div>
+                <div className='main-desc'>
+                    <p>{questions.length} Questions</p>
+                </div>
+                <div className="questions">
+                    <div className="question p-0">
+                        <Posts posts={currentPosts} />
                     </div>
+                </div>
+                <div className="container">
+                    <Pagination postsPerPage={postPerPage} totalPosts={questions.length} paginate={paginate} />
                 </div>
             </div>
         </div>

@@ -31,7 +31,7 @@ export default function AdminSidebar() {
     }, [location]);
 
     return (
-        <div className='sidebar'>
+        <div className='admin-sidebar'>
             <div className="sidebar-container">
                 <div className={`sidebar-option ${activeOption === 0 ? 'side-active' : ''}`}>
                 <NavLink to="/adminuser"><AccountCircle/>Show Users</NavLink>

@@ -123,7 +123,7 @@ export default function Posts({ posts }) {
                                     </div>
                                 </Tooltip>
                                 <div className="author">
-                                    <small className='d-flex flex-row-reverse'>{question.user.username} asked this at {question.created_at} </small>
+                                    <small className='d-flex flex-row-reverse mr-5'>{question.user.username} asked this at {question.created_at} </small>
                                 </div>
                             </div>
                         </div>

@@ -36,12 +36,10 @@ export default function ShowProfile() {
         marginTop: "13vh",
         zIndex: 1,
         backgroundColor: "white",
+        display: "flex",
+        justifyContent: "center",
       }}
-    >
-      <div className="stack-index">
-        <div className="stack-index-content">
-          <Sidebar />
-          <div className="main d-flex align-items-center">
+    >    <div className="d-flex align-items-center" >
             <div
               className="d-flex align-items-center justify-content-center "
               style={{
@@ -132,7 +130,5 @@ export default function ShowProfile() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
   );
 }

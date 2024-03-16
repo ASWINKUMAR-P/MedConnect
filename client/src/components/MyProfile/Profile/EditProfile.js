@@ -45,10 +45,7 @@ export default function EditProfile() {
 
   return (
     <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-      <div className="stack-index">
-        <div className="stack-index-content">
-          <Sidebar/>
-          <div className="main d-flex align-items-center">
+        <div className="main d-flex align-items-center">
       <div
         className="d-flex align-items-center justify-content-center "
         style={{
@@ -79,7 +76,5 @@ export default function EditProfile() {
       </div>
     </div>
         </div>
-      </div>
-    </div>
   )
 }
