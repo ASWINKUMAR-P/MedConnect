@@ -345,12 +345,14 @@ export default function Content(props) {
   const renderComment = (comment, answerId) => {
     return (
       <div key={comment.id} className="comment">
-        <strong>{comment.user.username}:</strong> {comment.comment}
+        <div className="d-flex flex-row">
+        <strong>{(comment.user.username.is_staff)&& "Dr. "}{comment.user.username}:   </strong>{comment.comment}
         <Tooltip title="Report comment" arrow>
           <button className="ml-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenCommentDialog(comment.id)}>
             <Report style={{ color: "black" }} />
           </button>
         </Tooltip>
+        </div>  
       </div>
     );
   };
@@ -379,22 +381,24 @@ export default function Content(props) {
         {localStorage.getItem("username") === author && (
           <>
             {ans.is_accepted ? (
-              <Checkbox color="success" checked onClick={(e) => handleReject(e, ans.id)} />
-            ) : (
-              <Checkbox color="secondary" onClick={(e) => handleAccept(e, ans.id)} />
+              <><Tooltip title="reject" arrow><Checkbox color="success" checked onClick={(e) => handleReject(e, ans.id)} /></Tooltip>{"Reject answer"}</>
+              ):(
+              <><Tooltip title="accept" arrow><Checkbox color="secondary" onClick={(e) => handleAccept(e, ans.id)}/></Tooltip>{"Accept Answer"}</>
             )}
           </>
         )}
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <Tooltip title="Comment box" arrow>
           <button onClick={() => toggleComments(ans.id)} className="mr-2" style={{ background: "none", border: "1px solid white", padding: "unset" }}>
             <CommentIcon style={{ color: "black" }} />
           </button>
-        </Tooltip>
+        </Tooltip><>Comment</>
+        &nbsp;&nbsp;&nbsp;&nbsp;
         <Tooltip title="Report answer" arrow>
           <button className="mr-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenDialog(ans.id)}>
             <Report style={{ color: "black" }} />
           </button>
-        </Tooltip>
+        </Tooltip><>Report</>
         {comments[ans.id] && (
           <div>
             {comments[ans.id].length > 0 && (
@@ -408,22 +412,22 @@ export default function Content(props) {
   };
 
   return (
-    <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white;margin-left:200px">
+    <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white;margin-left:200px;padding-left:20px">
           <div Style="height:100vh;width:70%;display:block;">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column">
-                <strong style={{color:"#00008B"}}>Title: {question.title}</strong>
+                <div style={{color:"#0074CC",fontSize:"20px"}}>Title:<span style={{color:"black"}}>  {question.title}</span></div>
                 <div>
-                  <strong style={{color:"#00008B"}}>Posted by:</strong>{author}
+                  <div style={{color:"#0074CC",fontSize:"20px"}}>Posted by:<span style={{color:"black"}}>  {author}</span></div>
                 </div>
-                <strong style={{color:"#00008B"}} className="mt-3">Description:</strong>
+                <div style={{color:"#0074CC"}} className="mt-3">Description:</div>
                 <div>{question.description}</div>
               </div>
             </div>
             <div className="mt-5">
-              {answers.length == 0 ? <strong style={{ color:"#00008B" }}>No Answers</strong> : <></>}
-              {answers.length == 1 ? <strong style={{ color:"#00008B" }}>1 Answer</strong> : <></>}
-              {answers.length > 1 ? <strong style={{ color:"#00008B" }}>{answers.length} Answers</strong> : <></>}
+              {answers.length == 0 ? <div style={{ color:"#0074CC" }}>No Answers</div> : <></>}
+              {answers.length == 1 ? <div style={{ color:"#0074CC" }}>1 Answer</div> : <></>}
+              {answers.length > 1 ? <div style={{ color: "#0074CC" }}>{answers.length} Answers</div> : <></>}
             </div>
             {answers.length > 0 && (
               <div className="mt-3">
@@ -436,7 +440,7 @@ export default function Content(props) {
                           <ArrowDropUp style={{ color: "black", fontWeight: "bold"}} sx={{ fontSize: 50 }}/>
                         </IconButton>
                         </Tooltip>
-                        <div className="d-flex justify-content-center"><strong style={{fontSize:"20px"}}>{ans.votes}</strong></div>
+                        <div className="d-flex justify-content-center"><div style={{fontSize:"20px"}}>{ans.votes}</div></div>
                         <Tooltip title="Downvote" arrow>
                         <IconButton className="btn p-0" id={"ansdownvotebtn" + ans.id} onClick={(e) => downvote(e, ans.id)}>
                           <ArrowDropDown style={{ color: "black", fontWeight: "bold"}} sx={{ fontSize: 50 }}/>
@@ -449,8 +453,8 @@ export default function Content(props) {
                       <div className="d-flex flex-column justify-content-center">
                         <div className="d-flex flex-row">
                           <div>
-                            <div className="mb-4"><strong Style="color:#00008B">Answered by: </strong>{ans.user.is_staff && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices style={{color:"red"}} /></Tooltip></>}</div>
-                            <strong style={{ color:"#00008B" }}>Solution</strong><div className="mb-4">{ans.solution}</div>
+                            <div className="mb-4"><div Style="color:#0074CC">Answered by: </div>{ans.user.is_staff && <>  Dr. </>} {ans.user.username} {ans.user.is_staff && <><Tooltip title="Doctor's solution"><MedicalServices style={{color:"red"}} /></Tooltip></>}</div>
+                            <div style={{ color:"#0074CC" }}>Solution</div><div className="mb-4">{ans.solution}</div>
                             <div className="d-flex flex-row">
                               {renderCommentIcon(ans)}
                             </div>
@@ -466,7 +470,7 @@ export default function Content(props) {
             {console.log(question)}
             {localStorage.getItem("username") !== author && (
               <div className="mt-4">
-                <strong style={{ color:"#00008B" }}>Your Answer</strong>
+                <div style={{ color:"#0074CC" }}>Your Answer</div>
                 <form
                   onSubmit={(e) => handleSubmit(e, question.id)}
                   method="POST"

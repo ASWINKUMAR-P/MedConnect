@@ -36,7 +36,7 @@ function App() {
   return (
       <BrowserRouter>
         <Navbar />
-        {usertype == 'admin' ? <AdminSidebar /> : (usertype == 'user' ? <Sidebar /> : <Homepage/>)}
+        {usertype == 'admin' ? <AdminSidebar /> : (usertype == 'user' ? <Sidebar /> : <></>)}
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/ask" element={<Editor />} />

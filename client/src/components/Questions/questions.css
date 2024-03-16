@@ -100,7 +100,6 @@ button{
     display: flex;
     flex-direction: column;
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
     width: 100%;
 }
 
