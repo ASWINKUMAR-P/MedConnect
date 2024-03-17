@@ -3,12 +3,9 @@
 import React, { useState } from "react";
 import "./profile.css";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../Sidebar/Sidebar";
-import "../../Sidebar/Sidebar.css";
 
 export default function EditProfile() {
   const [credentials, setCredentials] = useState({ name: "", email: "", password: "" })
-  const navigate = useNavigate();
 
   const onChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value })
@@ -36,7 +33,6 @@ export default function EditProfile() {
       localStorage.setItem('token', json.token);
       alert("Your profile is edited successfully");
       window.location.reload();
-      navigate("/questions");
     }
     else {
       alert(json.error);

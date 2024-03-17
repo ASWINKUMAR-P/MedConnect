@@ -31,7 +31,9 @@ export default function AdminSidebar() {
     }, [location]);
 
     return (
-        <div className='admin-sidebar'>
+        <>
+        { localStorage.getItem('usertype')=='admin' ? (
+            <div className='admin-sidebar'>
             <div className="sidebar-container">
                 <div className={`sidebar-option ${activeOption === 0 ? 'side-active' : ''}`}>
                 <NavLink to="/adminuser"><AccountCircle/>Show Users</NavLink>
@@ -44,5 +46,7 @@ export default function AdminSidebar() {
                 </div>
             </div>
         </div>
+        ) : null}
+        </>
     )
 }

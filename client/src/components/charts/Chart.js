@@ -1,28 +1,10 @@
-// please install npm install react-apexcharts apexcharts
-
 import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
 
 export default function Analysis({title,count,Tags}) {
     return(
-                   // chart from react-apexcharts
-                    <Chart
-                        type="pie"
-                        width={500}
-                        height={500}
-
-                        series={count}
-
-                        options={{
-                            title: {
-                                text: title
-                            },
-                            noData: { text: "Empty Data" },
-                            // colors:["#f90000","#f0f"],
-                            labels: Tags
-                        }}
-                    >
-                    </Chart>
+        <Chart type="pie" width={400} height={400} series={count} options={{title: {text: title},noData: { text: "Empty Data" },labels: Tags}}>
+        </Chart>
     );
 }
 

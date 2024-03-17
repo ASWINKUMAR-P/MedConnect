@@ -17,8 +17,8 @@ export default function Analysis() {
     const [queLen, setQueLen] = useState(0);
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/question/fetchUserQuestions/${localStorage.getItem("username")}`, {
-            method: "POST",
+        fetch(`http://localhost:8000/api/getQuestionByUserName/${localStorage.getItem("username")}`, {
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -36,34 +36,32 @@ export default function Analysis() {
         if (filters.startDate && filters.endDate) {
             let cnt = 0;
             questions.map(question => {
-                // console.log(question.date.substring(0, 10));
-                if (question.date.substring(0, 10) >= filters.startDate && question.date.substring(0, 10) <= filters.endDate) {
+                if (question.jsdate.substring(0, 10) >= filters.startDate && question.jsdate.substring(0, 10) <= filters.endDate) {
                     cnt++;
-                    question.tags.split(" ").map(tag => {
-                        freqOfTags[tag] = 0;
+                    question.tags.map(tag => {
+                        freqOfTags[tag.name] = 0;
                     })
                 }
             })
 
             questions.map(question => {
-                if (question.date.substring(0, 10) >= filters.startDate && question.date.substring(0, 10) <= filters.endDate)
-                    question.tags.split(" ").map(tag => {
-                        freqOfTags[tag] = freqOfTags[tag] + 1;
+                if (question.jsdate.substring(0, 10) >= filters.startDate && question.jsdate.substring(0, 10) <= filters.endDate)
+                    question.tags.map(tag => {
+                        freqOfTags[tag.name] = freqOfTags[tag.name] + 1;
                     })
             })
-
             setQueLen(cnt);
         }
         else {
             questions.map(question =>
-                question.tags.split(" ").map(tag => {
-                    freqOfTags[tag] = 0;
+                question.tags.map(tag => {
+                    freqOfTags[tag.name] = 0;
                 })
             )
 
             questions.map(question =>
-                question.tags.split(" ").map(tag => {
-                    freqOfTags[tag] = freqOfTags[tag] + 1;
+                question.tags.map(tag => {
+                    freqOfTags[tag.name] = freqOfTags[tag.name] + 1;
                 })
             )
             setQueLen(questions.length);
@@ -88,8 +86,8 @@ export default function Analysis() {
     const [actAnsLen, setactAnsLen] = useState(0);
 
     useEffect(() => {
-        fetch(`http://localhost:5000/api/answer/fetchUserAcceptedAnsweredQuestions/${localStorage.getItem("username")}`, {
-            method: "POST",
+        fetch(`http://localhost:8000/api/getUserAcceptedAnswersQuestion/${localStorage.getItem("username")}`, {
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -107,20 +105,20 @@ export default function Analysis() {
         if (filters.startDate && filters.endDate) {
             let cnt = 0;
             acceptedansweredQues.map(ques => {
-                const tags = ques[0].tags;
-                if (ques[0].date.substring(0, 10) >= filters.startDate && ques[0].date.substring(0, 10) <= filters.endDate) {
+                const tags = ques.tags;
+                if (ques.jsdate.substring(0, 10) >= filters.startDate && ques.jsdate.substring(0, 10) <= filters.endDate) {
                     cnt++;
-                    tags.split(" ").map(tag =>
-                        ac_ans_freqOfTags[tag] = 0
+                    tags.map(tag =>
+                        ac_ans_freqOfTags[tag.name] = 0
                     )
                 }
             })
 
             acceptedansweredQues.map(ques => {
-                const tags = ques[0].tags;
-                if (ques[0].date.substring(0, 10) >= filters.startDate && ques[0].date.substring(0, 10) <= filters.endDate)
-                    tags.split(" ").map(tag =>
-                        ac_ans_freqOfTags[tag] = ac_ans_freqOfTags[tag] + 1
+                const tags = ques.tags;
+                if (ques.jsdate.substring(0, 10) >= filters.startDate && ques.jsdate.substring(0, 10) <= filters.endDate)
+                    tags.map(tag =>
+                        ac_ans_freqOfTags[tag.name] = ac_ans_freqOfTags[tag.name] + 1
                     )
             })
 
@@ -128,16 +126,16 @@ export default function Analysis() {
         }
         else {
             acceptedansweredQues.map(ques => {
-                const tags = ques[0].tags;
-                tags.split(" ").map(tag =>
-                    ac_ans_freqOfTags[tag] = 0
+                const tags = ques.tags;
+                tags.map(tag =>
+                    ac_ans_freqOfTags[tag.name] = 0
                 )
             })
 
             acceptedansweredQues.map(ques => {
-                const tags = ques[0].tags;
-                tags.split(" ").map(tag =>
-                    ac_ans_freqOfTags[tag] = ac_ans_freqOfTags[tag] + 1
+                const tags = ques.tags;
+                tags.map(tag =>
+                    ac_ans_freqOfTags[tag.name] = ac_ans_freqOfTags[tag.name] + 1
                 )
             })
 
@@ -160,8 +158,8 @@ export default function Analysis() {
     const [Anscount, setAnsCount] = useState([]);
     const [ansLen, setansLen] = useState(0);
     useEffect(() => {
-        fetch(`http://localhost:5000/api/answer/fetchUserAnsweredQuestions/${localStorage.getItem("username")}`, {
-            method: "POST",
+        fetch(`http://localhost:8000/api/getUserAnswersQuestion/${localStorage.getItem("username")}`, {
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -179,20 +177,20 @@ export default function Analysis() {
         if (filters.startDate && filters.endDate) {
             let cnt = 0;
             answeredQues.map(ques => {
-                const tags = ques[0].tags;
-                if (ques[0].date.substring(0, 10) >= filters.startDate && ques[0].date.substring(0, 10) <= filters.endDate) {
+                const tags = ques.tags;
+                if (ques.jsdate.substring(0, 10) >= filters.startDate && ques.jsdate.substring(0, 10) <= filters.endDate) {
                     cnt++;
-                    tags.split(" ").map(tag =>
-                        ans_freqOfTags[tag] = 0
+                    tags.map(tag =>
+                        ans_freqOfTags[tag.name] = 0
                     )
                 }
             })
 
             answeredQues.map(ques => {
-                const tags = ques[0].tags;
-                if (ques[0].date.substring(0, 10) >= filters.startDate && ques[0].date.substring(0, 10) <= filters.endDate)
-                    tags.split(" ").map(tag =>
-                        ans_freqOfTags[tag] = ans_freqOfTags[tag] + 1
+                const tags = ques.tags;
+                if (ques.jsdate.substring(0, 10) >= filters.startDate && ques.jsdate.substring(0, 10) <= filters.endDate)
+                    tags.map(tag =>
+                        ans_freqOfTags[tag.name] = ans_freqOfTags[tag.name] + 1
                     )
             })
 
@@ -200,16 +198,16 @@ export default function Analysis() {
         }
         else {
             answeredQues.map(ques => {
-                const tags = ques[0].tags;
-                tags.split(" ").map(tag =>
-                    ans_freqOfTags[tag] = 0
+                const tags = ques.tags;
+                tags.map(tag =>
+                    ans_freqOfTags[tag.name] = 0
                 )
             })
 
             answeredQues.map(ques => {
-                const tags = ques[0].tags;
-                tags.split(" ").map(tag =>
-                    ans_freqOfTags[tag] = ans_freqOfTags[tag] + 1
+                const tags = ques.tags;
+                tags.map(tag =>
+                    ans_freqOfTags[tag.name] = ans_freqOfTags[tag.name] + 1
                 )
             })
 
@@ -227,35 +225,25 @@ export default function Analysis() {
     }, [answeredQues, filters]);
 
     return (
-        <div>
-            <div className="container" Style="height:100vh; margin-top:13vh; z-index:1; background-color:white">
-                
-                <div className='header_and_content'>
-
-                    <div className='filters_menu'>
-                        <input type="date" name="startDate" onChange={onChange} />
-                        <strong Style="display:inline">To</strong>
-                        <input type="date" name="endDate" onChange={onChange} />
-                    </div>
-                    <div className="title_row1">
-                        {/* <p className="title1">Total No of Questions asked by You: {questions.length}</p>
-                            <p className="title2">Total No of Questions asked by You: {questions.length}</p> */}
-                    </div>
-                    <div className="charts">
-                        <div className="first_row">
-                            <Chart title={"Total " + queLen + " questions asked by you & used tags as follows"} count={count} Tags={Tags} />
-                            <Chart title={"Total " + ansLen + " answers given by you & used tags as follows"} count={Anscount} Tags={AnsTags} />
-                        </div>
-                        <div className="last_chart">
-                            <Chart title={"Your total " + actAnsLen + " answers acceted & used tags as follows"} count={AcAnscount} Tags={AcAnsTags} />
-                        </div>
-                    </div>
-
-                    <hr Style="border: 0.7px solid" />
-
+        <div Style="margin-top:13vh; z-index:1; background-color:white; margin-left:200px">
+            <div className='filters_menu'>
+                <strong Style="display:inline;font-size:20px">From</strong>
+                <input type="date" name="startDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
+                <strong Style="display:inline;font-size:20px">To</strong>
+                <input type="date" name="endDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
+            </div>
+            <div className="mt-3">
+                <div className="ml-3" style={{fontSize:"20px"}}><strong>Total questions asked :</strong> {queLen}</div>
+                <div className="ml-3" style={{fontSize:"20px"}}><strong>Total answers given   :</strong> {ansLen}</div>
+                <div className="ml-3" style={{fontSize:"20px"}}><strong>Total answers accepted :</strong> {actAnsLen}</div>
+            </div>
+            <div className="charts">
+                <div className="d-flex flex-row">
+                    <Chart title={"Your questions and percentage on used tags"} count={count} Tags={Tags} />
+                    <Chart title={"Your answers and percentage on used tags"} count={Anscount} Tags={AnsTags} />
+                    <Chart title={"Your answers and percentage on used tags"} count={AcAnscount} Tags={AcAnsTags} />
                 </div>
             </div>
         </div>
-
     );
 }
