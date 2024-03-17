@@ -32,7 +32,7 @@ urlpatterns = [
     path('getNoOfAnswersForAll/', getNoOfAnswersForAll, name="getNoOfAnswersForAll"),
     path('acceptAnswer/<int:pk>/', acceptAnswer, name="acceptAnswer"),
     path('rejectAnswer/<int:pk>/', rejectAnswer, name="rejectAnswer"),
-    path('getAllFilteredAnswers/', getAllFilteredAnswers, name="getAllFilteredAnswers"),
+    path('getAllFilteredAnswers/<int:pk>/', getAllFilteredAnswers, name="getAllFilteredAnswers"),
 
     path('getProfile/', getProfile, name="getProfile"),
     path('getAllProfiles/', getAllProfile, name="getAllProfiles"),
@@ -55,11 +55,10 @@ urlpatterns = [
     path('getAllUsers/',getUsers, name="getAllUsers"),
     path('getUserAcceptedAnswersQuestion/<str:pk>/',getUserAcceptedAnswersQuestion, name="getUserAcceptedAnswersQuestion"),
     path('getUserAnswersQuestion/<str:pk>/',getUserAnswersQuestion, name="getUserAnswersQuestion"),
-    path('getAllAnswers/',getAllAnswers, name="getAllAnswers"),
+    path('getAllAnswers/<int:pk>/',getAllAnswers, name="getAllAnswers"),
 
     path('getComments/<int:pk>/',getCommentsByAnswerId, name="getComments"),
     path('addComment/<int:pk>/',addComment, name="addComment"),
-
+    path('deleteComment/<int:pk>/',deleteComment, name="deleteComment"),
     path('report/',report, name="report"),
-
 ]

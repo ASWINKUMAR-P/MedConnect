@@ -33,10 +33,7 @@ export default function ViewDocs() {
     
 
     return (
-        <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-            <div className='stack-index'>
-                <div className='stack-index-content'>
-                    <AdminSidebar />
+        <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white",marginLeft:"200px" }}>
                     <div style={{ display: 'block' }}>
                         <div className="mb-3 d-flex justify-content-center">
                             <div style={{width:"500px",height:"800px"}}>
@@ -47,8 +44,6 @@ export default function ViewDocs() {
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     );
 }

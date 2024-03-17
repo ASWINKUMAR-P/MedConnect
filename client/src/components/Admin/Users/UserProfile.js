@@ -37,14 +37,11 @@ export default function ShowProfile() {
         backgroundColor: "white",
       }}
     >
-      <div className="stack-index">
-        <div className="stack-index-content">
-          <AdminSidebar />
+      
           <div className="main d-flex align-items-center">
             <div
              className="d-flex align-items-center justify-content-center "
               style={{
-                marginTop: "5%",
                 border: "2px solid black",
                 borderRadius: "5px",
               }}
@@ -126,8 +123,6 @@ export default function ShowProfile() {
             </div>
             
           </div>
-        </div>
-      </div>
     </div>
   );
 }

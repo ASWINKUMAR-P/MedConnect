@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Editor from './components/Editor/Editor';
 import Homepage from './components/Homepage/Homepage';
@@ -20,7 +21,7 @@ import Tags from './components/Tags/Tags';
 import QuestionOnTags from './components/Tags/QuestionOnTags';
 import Search from './components/Questions/Search';
 import AdminQuestions from './components/Admin/Questions/Adminquestion';
-import Adminanswer from './components/Admin/Answers/AdminAnswer';
+import Adminanswer from './components/Admin/Questions/AdminAnswer';
 import UserProfileAnalysis from './components/Admin/Users/UserProfileAnalysis';
 import ShowProfile from './components/MyProfile/Profile/ShowProfile';
 import EditProfile from './components/MyProfile/Profile/EditProfile';
@@ -31,8 +32,22 @@ import Sidebar from './components/Sidebar/Sidebar';
 import AdminSidebar from './components/Admin/AdminSidebar';
 import { Home } from '@mui/icons-material';
 
+
+
 function App() {
   const usertype = localStorage.getItem('usertype');
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  const isLoggedin = () => {
+    if (localStorage.getItem('username') !== null ) {
+      setLoginStatus(true);
+    }
+  };
+
+  useEffect(() => {
+    isLoggedin();
+  }, []);
+
   return (
       <BrowserRouter>
         <Navbar />
@@ -57,7 +72,7 @@ function App() {
           <Route path="/tags" element={<Tags />} />
           {/* admin routes */}
           <Route path="/adminquestions" element={<AdminQuestions />} />
-          <Route path="/adminanswer" element={<Adminanswer />} />
+          <Route path="/adminanswer/:id" element={<Adminanswer />} />
           <Route path="/adminuser" element={<AdminUser />} />
           <Route path="/UserProfileAnalysis/:username" element={<UserProfileAnalysis />} />
           <Route path="/UserProfile/:username" element={<AdminUserProfile />} />

@@ -147,13 +147,8 @@ export default function Adminquestion() {
   };
 
   return (
-    <div
-      Style="height:100vh;margin-top:13vh; z-index:1; background-color:white"
-    >
-      <div className="stack-index">
-        <div className="stack-index-content">
-          <AdminSidebar />
-          <div style={{display:"block"}}> 
+    <div Style="margin-top:13vh; z-index:1; background-color:white; margin-left:200px">
+          <div style={{display:"block",paddingLeft:"20px"}}> 
             <br></br>
             {/* <div style={{ marginTop: '10px', marginLeft: '50px' }}> */}
             <div className="filters_menu">
@@ -173,17 +168,6 @@ export default function Adminquestion() {
                 ))}
               </select>
             </div>
-            <div className="mb-2">
-              <div>
-                <input
-                  type="search"
-                  className="form-control me-2"
-                  placeholder="Search questions by title"
-                  name="search"
-                  onChange={searchHandler}
-                />
-              </div>
-            </div>
             <div className="questions">
               <PostQues questions={currentPosts} />
             </div>
@@ -191,8 +175,6 @@ export default function Adminquestion() {
                     <Pagination postsPerPage={postPerPage} totalPosts={questions.length} paginate={paginate} />
             </div>
           </div>
-        </div>
-      </div>
     </div>
   );
 }

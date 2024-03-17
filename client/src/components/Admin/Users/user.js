@@ -55,56 +55,51 @@ export default function AdminUser() {
   };
 
   return (
-    <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-      <div className='stack-index'>
-        <div className='stack-index-content'>
-          <AdminSidebar />
-          <div Style="display:block">
-            <div className="mb-3">
-              <div>
-                <input className="form-control me-2" type="search" placeholder="Search users"  onChange={handleSearch}/>
-              </div>
-            </div>
-            <table className="table table-hover " style={{fontWeight:"bold",textAlign:"center"}}>
-              <thead>
-                <tr className='bg-primary'>
-                  <th style={{ width: '150px', height: '40px', padding:'15px', verticalAlign:"middle" }}>User Name </th>
-                  <th style={{ width: '300px', height: '40px', padding:'15px', verticalAlign:"middle" }}>Email id</th>
-                  <th style={{ width: '200px', height: '40px', padding:'15px', verticalAlign:"middle" }}>User Type</th>
-                  <th style={{ width: '50px', height: '40px', padding:'15px', verticalAlign:"middle" }}>No of Questions</th>
-                  <th style={{ width: '50px', height: '40px', padding:'15px', verticalAlign:"middle" }}>No of Answers</th>
-                  <th style={{ width: '75px', height: '40px', padding:'15px', verticalAlign:"middle" }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td style={{ width: '100px', height: '40px', padding:'10px', verticalAlign:"middle" }}>
-                      <NavLink to={{ pathname: `/UserProfile/${user.username}`}} style={{ textDecoration:"none" }}>{user.is_doctor && "Dr. "}{user.username}</NavLink>
-                    </td>
-                    <td style={{ width: '400px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.email}</td>
-                    <td style={{ width: '200px', height: '40px', padding:'10px', verticalAlign:"middle" }}>
-                      {!user.is_doctor ? 'Normal User': 'Doctor'}
-                    </td>
-                    <td style={{ width: '50px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.questionCount}</td>
-                    <td style={{ width: '50px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.answerCount}</td>
-                    <td style={{ width: '75px', height: '40px', padding:'10px' }}>
-                    <Button
-                          variant="outlined"
-                          color="error"
-                          Style="margin-top:auto; margin-bottom:auto;"
-                          onClick={() => deleteUser(user.id)}
-                          startIcon={<DeleteIcon />}
-                        >
-                          Delete
-                        </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+    <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white",marginLeft:"200px" }}>
+      <div Style="display:block">
+        <div className="mb-3">
+          <div>
+            <input className="form-control me-2 ml-3" style={{maxWidth:"500px"}} type="search" placeholder="Search users"  onChange={handleSearch}/>
           </div>
         </div>
+        <table className="table table-hover ml-3 mr-2" style={{fontWeight:"bold",textAlign:"center"}}>
+          <thead>
+            <tr className='bg-primary'>
+              <th style={{ width: '150px', height: '40px', padding:'15px', verticalAlign:"middle" }}>User Name </th>
+              <th style={{ width: '300px', height: '40px', padding:'15px', verticalAlign:"middle" }}>Email id</th>
+              <th style={{ width: '200px', height: '40px', padding:'15px', verticalAlign:"middle" }}>User Type</th>
+              <th style={{ width: '50px', height: '40px', padding:'15px', verticalAlign:"middle" }}>No of Questions</th>
+              <th style={{ width: '50px', height: '40px', padding:'15px', verticalAlign:"middle" }}>No of Answers</th>
+              <th style={{ width: '75px', height: '40px', padding:'15px', verticalAlign:"middle" }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user) => (
+              <tr key={user.id}>
+                <td style={{ width: '100px', height: '40px', padding:'10px', verticalAlign:"middle" }}>
+                  <NavLink to={{ pathname: `/UserProfile/${user.username}`}} style={{ textDecoration:"none" }}>{user.is_doctor && "Dr. "}{user.username}</NavLink>
+                </td>
+                <td style={{ width: '400px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.email}</td>
+                <td style={{ width: '200px', height: '40px', padding:'10px', verticalAlign:"middle" }}>
+                  {!user.is_doctor ? 'Normal User': 'Doctor'}
+                </td>
+                <td style={{ width: '50px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.questionCount}</td>
+                <td style={{ width: '50px', height: '40px', padding:'10px', verticalAlign:"middle" }}>{user.answerCount}</td>
+                <td style={{ width: '75px', height: '40px', padding:'10px' }}>
+                <Button
+                      variant="outlined"
+                      color="error"
+                      Style="margin-top:auto; margin-bottom:auto;"
+                      onClick={() => deleteUser(user.id)}
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete
+                    </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

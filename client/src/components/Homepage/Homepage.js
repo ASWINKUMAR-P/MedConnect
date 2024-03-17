@@ -38,10 +38,6 @@ function Homepage() {
                                 <h2 className="head-title">MedConnect <br /><small>Connect Care Thrive</small></h2>
                                 <p>Find the best answer to your medical related queries, help others answer theirs. MedConnect is a community-based space to find answers to people's personal medical queries.</p>
                             </div>
-                            <div className="text-left">
-                                <NavLink to="/questions" className="btn btn-primary started-btn">Go to Dashboard</NavLink>
-
-                            </div>
                         </div>
                         <div className="col-lg-5 col-md-12 col-xs-12 mx-3">
                             <div className="intro-img">

@@ -155,10 +155,13 @@ def updateQuestionById(request, pk):
 @api_view(["DELETE"])
 def deleteQuestionById(request, pk):
     question = Question.objects.get(id=pk)
+    message = "Your question titled "+question.title+" is deleted by admin."
+    notification = Notifications.objects.create(user=question.user, message = message)
+    notification.save()
     question.delete()
     tags = Tags.objects.all()
     questions = Question.objects.all()
-    for tag in tags:
+    for tag in tags:                                    
         if not questions.filter(tags=tag):
             tag.delete()
     return Response(status=200,data={"message": "Question deleted successfully"})
@@ -557,43 +560,45 @@ def getUserAnswersQuestion(request,pk):
     return Response(status=200,data=serializer.data)
 
 @api_view(["POST"])
-def getAllFilteredAnswers(request):
+def getAllFilteredAnswers(request,pk):
     startDate = request.data.get("startDate")
     endDate = request.data.get("endDate")
-    tags = request.data.get("tags")
     status = request.data.get("status")
     #convert date to datetime
     if startDate:
         startDate = datetime.datetime.strptime(startDate, "%Y-%m-%d")
     if endDate:
         endDate = datetime.datetime.strptime(endDate, "%Y-%m-%d")
-    answers = Answer.objects.all()
+    question = Question.objects.get(id=pk)
+    answers = Answer.objects.filter(question=question)
     if startDate:
         answers = answers.filter(created_at__gte=startDate)
     if endDate:
         answers = answers.filter(created_at__lte=endDate)
-    if tags and tags!="":
-        answers = answers.filter(question__tags__name=tags)
     if status:
         if status == "Accepted":
             answers = answers.filter(is_accepted=True)
         elif status == "Not Accepted":
             answers = answers.filter(is_accepted=False)
-    #return the answers based on question created_at and answer created_at in ascending order
-    answers = answers.order_by("question__created_at","created_at")
+    answers = answers.order_by("created_at")
     return Response(status=200,data=AnswerSerializer(answers, many=True).data)
 
 @api_view(["GET"])
-def getAllAnswers(request):
-    answers = Answer.objects.all()
-    #return the answers based on question created_at and answer created_at in ascending order
-    answers = answers.order_by("question__created_at","created_at")
+def getAllAnswers(request,pk):
+    question = Question.objects.get(id=pk)
+    answers = Answer.objects.filter(question=question)
+    #sort answers based on created_at in ascending order
+    answers = answers.order_by("created_at")
     serializer = AnswerSerializer(answers, many=True)
     return Response(status=200,data=serializer.data)
 
 @api_view(["DELETE"])
 def deleteAnswer(request,pk):
     answer = Answer.objects.get(id=pk)
+    question = answer.question
+    message = "Your solution for the question titled "+question.title+" is deleted by admin."
+    notification = Notifications.objects.create(user=answer.user, message = message)
+    notification.save()
     answer.delete()
     return Response(status=200,data={"message": "Answer deleted successfully"})
 
@@ -648,6 +653,8 @@ def acceptRequest(request,pk):
     user.is_staff = True
     user.save()
     proof.save()
+    notification = Notifications.objects.create(user=user, message = "Your profile is upgraded to Doctor's profile")
+    notification.save()
     return Response(status=200,data={"message": "Proof accepted successfully"})
 
 @api_view(["POST"])
@@ -658,6 +665,8 @@ def rejectRequest(request,pk):
     user.is_staff = False
     user.save()
     proof.save()
+    notification = Notifications.objects.create(user=user, message = "Your profile upgrade request is rejected due to invalid documents.")
+    notification.save()
     return Response(status=200,data={"message": "Proof rejected successfully"})
 
 @api_view(["POST"])
@@ -680,4 +689,15 @@ def report(request):
     report = Report.objects.create(user=user,report_content=request.data.get("type"), question=question, answer=answer, comment=comment,reason=report_content)
     report.save()
     return Response(status=200,data={"message": "Reported successfully"})
-    
+
+@api_view(["DELETE"])
+def deleteComment(request,pk):
+    comment = Comment.objects.get(id=pk)
+    answer = comment.answer
+    question = answer.question
+    #give a message with question title for deleting comment
+    message = "Your comment on a solution for the question titled "+question.title+" is deleted by admin."
+    notification = Notifications.objects.create(user=comment.user, message = message)
+    notification.save()
+    comment.delete()
+    return Response(status=200,data={"message": "Comment deleted successfully"})

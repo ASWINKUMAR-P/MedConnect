@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { NavLink } from "react-router-dom";
 
 export default function PostQues({questions}){
 
@@ -61,7 +62,8 @@ export default function PostQues({questions}){
                   </div>
                   <div className="question-answer">
                       <div style={{ width: "90%" }}>
-                          <div style={{fontSize:"20px",fontWeight:"bold"}}>Question: {question.title}</div>
+                        <NavLink to={`/adminanswer/${question.id}`}>
+                          <div style={{fontSize:"20px",fontWeight:"bold"}}>Question: {question.title}</div></NavLink>
                           <div style={{fontSize:"15px"}}>{question.description}</div>
                           <div className="mt-3">
                           {question.tags.map((tag) => (
@@ -75,7 +77,7 @@ export default function PostQues({questions}){
                           </div>
                       </div>                                
                       <div className="author">
-                          <div className="author-details d-flex flex-row-reverse" style={{fontSize:"15px"}}>
+                          <div className="author-details d-flex flex-row-reverse mr-2" style={{fontSize:"15px"}}>
                               <small>asked by {question.user.username} on {question.created_at}</small>
                           </div>
                       </div>

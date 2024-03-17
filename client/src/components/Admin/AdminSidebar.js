@@ -39,9 +39,6 @@ export default function AdminSidebar() {
                 <div className={`sidebar-option ${activeOption === 1 ? 'side-active' : ''}`}>
                 <NavLink to="/adminquestions"><Public/>View all question</NavLink>
                 </div>
-                <div className={`sidebar-option ${activeOption === 2 ? 'side-active' : ''}`}>
-                <NavLink to="/adminanswer"><Public/>View all answer</NavLink>
-                </div>
                 <div className={`sidebar-option ${activeOption === 3 ? 'side-active' : ''}`}>
                 <NavLink to="/viewRequests"><Tag/>View Requests</NavLink>
                 </div>

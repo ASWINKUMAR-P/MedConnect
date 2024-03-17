@@ -53,11 +53,8 @@ export default function ViewRequests() {
   }, [state]);
 
   return (
-    <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>
-      <div className='stack-index'>
-        <div className='stack-index-content'>
-          <AdminSidebar />
-          <div Style="display:block;">
+    <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white", marginLeft:"200px" }}>
+          <div Style="display:block;" className='ml-3 mr-3'>
             <div className="mb-3">
             </div>
             <table className="table table-hover " style={{fontWeight:"bold",textAlign:"center"}}>
@@ -98,8 +95,6 @@ export default function ViewRequests() {
             <div>
             </div>
           </div>
-        </div>
-      </div>
     </div>
   );
   
