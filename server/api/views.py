@@ -291,9 +291,6 @@ def searchQuestions(request):
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
 
-#Answer Based Views
-#======================================================================================
-
 @api_view(["POST"])
 def addAnswer(request, pk):
     question = Question.objects.get(id=pk)
@@ -701,3 +698,4 @@ def deleteComment(request,pk):
     notification.save()
     comment.delete()
     return Response(status=200,data={"message": "Comment deleted successfully"})
+
