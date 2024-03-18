@@ -111,9 +111,9 @@ export default function Posts({ posts }) {
             });
 
             const data = await response.json();
-            alert(data.message); // Display response message
-            handleEditDialogClose(); // Close the dialog
-            window.location.reload(); // Reload the page
+            alert(data.message);
+            handleEditDialogClose();
+            window.location.reload();
         } catch (error) {
             console.error('Error editing question:', error);
             alert('An error occurred while editing the question.');

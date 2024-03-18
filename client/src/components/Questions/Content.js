@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-import { ArrowDropUp, ArrowDropDown, CheckCircle, Check, Report } from "@mui/icons-material";
+import { ArrowDropUp, ArrowDropDown, CheckCircle, Check, Delete, Warning, Edit, CommentBankTwoTone } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import "./content.css";
-import Sidebar from "../Sidebar/Sidebar";
 import { MedicalServices } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -29,6 +28,14 @@ export default function Content(props) {
   const [selectedReason, setSelectedReason] = useState("");
   const [selectedAnswerId, setSelectedAnswerId] = useState("");
   const [selectedCommentId, setSelectedCommentId] = useState("");
+  const [editCommentId, setEditCommentId] = useState("");
+  const [editCommentValue, setEditCommentValue] = useState("");
+  const [openEditCommentDialog, setOpenEditCommentDialog] = useState(false);
+  const [editAnswerId, setEditAnswerId] = useState("");
+  const [editAnswerValue, setEditAnswerValue] = useState("");
+  const [openEditAnswerDialog, setOpenEditAnswerDialog] = useState(false);
+
+
 
   const reportReasons = [
     'Spam or Advertising',
@@ -108,6 +115,13 @@ export default function Content(props) {
       });
   };
 
+  const handleEditAnswer = (answerId, answerText) => {
+    setEditAnswerId(answerId);
+    setEditAnswerValue(answerText);
+    setOpenEditAnswerDialog(true);
+  };
+  
+
   const isLoggedIn = () => {
     if (localStorage.getItem("username") !== null) {
       setloginstatus(true);
@@ -144,6 +158,44 @@ export default function Content(props) {
         setAnswer(data);
       });
   };
+
+  const deleteAnswer = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/deleteMyAnswer/${id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+      alert(json.message);
+      window.location.reload(true);
+    } catch (error) {
+      console.error("Error while deleting answer:", error);
+      alert("Failed to delete answer");
+    }
+  };
+
+  const handleSubmitEditAnswer = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/editAnswer/${editAnswerId}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ solution: editAnswerValue }),
+      });
+      const json = await response.json();
+      alert(json.message);
+      setOpenEditAnswerDialog(false); // Close the edit answer dialog
+      window.location.reload(true);
+    } catch (error) {
+      console.error("Error while editing answer:", error);
+      alert("Failed to edit answer");
+    }
+  };
+  
 
   const getValue = (e) => {
     setValue(e.target.value);
@@ -331,6 +383,24 @@ export default function Content(props) {
     }
   };
 
+  const deleteComment = async (commentId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/deleteMyComment/${commentId}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+      alert(json.message);
+      window.location.reload(true);
+      }
+    catch (error) {
+      console.error("Error while deleting comment:", error);
+      alert("Failed to delete comment");
+    }
+  };
+
   const toggleComments = async (answerId) => {
     setComments((prevComments) => ({
       ...prevComments,
@@ -345,18 +415,71 @@ export default function Content(props) {
   const renderComment = (comment, answerId) => {
     return (
       <div key={comment.id} className="comment">
-        <div className="d-flex flex-row">
-        <strong>{(comment.user.username.is_staff)&& "Dr. "}{comment.user.username}:   </strong>{comment.comment}
+        <div className="d-flex flex-row align-items-center">
+        {comment.user.username == localStorage.getItem("username") ? (
+        <><strong className="mr-2">{`You: `}</strong>{comment.comment}</>
+        ) : (
+          <>
+            <strong className="mr-2">
+              {comment.user.username.is_staff ? "Dr. " : ""}
+              {`${comment.user.username}: `}
+            </strong>
+            {comment.comment}
+          </>
+        )
+        }
+        {comment.user.username == localStorage.getItem("username") ? (
+          <>
+          <Tooltip title="Edit" arrow>
+              <IconButton onClick={() => handleEditComment(comment.id, comment.comment)}>
+                  <Edit style={{ color: "green" }} />
+              </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete" arrow>
+              <IconButton onClick={() => deleteComment(comment.id)}>
+                  <Delete style={{ color: "red" }} />
+              </IconButton>
+          </Tooltip>
+      </>
+  ) : (
         <Tooltip title="Report comment" arrow>
           <button className="ml-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenCommentDialog(comment.id)}>
-            <Report style={{ color: "black" }} />
+            <Warning style={{ color: "black" }} />
           </button>
         </Tooltip>
+      )
+  }
         </div>  
       </div>
     );
   };
 
+  const handleEditComment = (commentId, commentText) => {
+    setEditCommentId(commentId);
+    setEditCommentValue(commentText);
+    setOpenEditCommentDialog(true); // Open the edit comment dialog
+  };
+  
+  const handleSubmitEdit = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/editComment/${editCommentId}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ comment: editCommentValue }),
+      });
+      const json = await response.json();
+      alert(json.message);
+      setOpenEditCommentDialog(false); // Close the edit comment dialog
+      window.location.reload(true);
+    } catch (error) {
+      console.error("Error while editing comment:", error);
+      alert("Failed to edit comment");
+    }
+  };
+  
   const renderComments = (answerId) => {
     const answerComments = comments[answerId] || [];
     return (
@@ -381,9 +504,9 @@ export default function Content(props) {
         {localStorage.getItem("username") === author && (
           <>
             {ans.is_accepted ? (
-              <><Tooltip title="reject" arrow><Checkbox color="success" checked onClick={(e) => handleReject(e, ans.id)} /></Tooltip>{"Reject answer"}</>
+              <><Tooltip title="reject" arrow><Checkbox color="success" checked onClick={(e) => handleReject(e, ans.id)} /></Tooltip>{"Accepted"}</>
               ):(
-              <><Tooltip title="accept" arrow><Checkbox color="secondary" onClick={(e) => handleAccept(e, ans.id)}/></Tooltip>{"Accept Answer"}</>
+              <><Tooltip title="accept" arrow><Checkbox color="secondary" onClick={(e) => handleAccept(e, ans.id)}/></Tooltip>{"Rejected"}</>
             )}
           </>
         )}
@@ -394,11 +517,29 @@ export default function Content(props) {
           </button>
         </Tooltip><>Comment</>
         &nbsp;&nbsp;&nbsp;&nbsp;
+        {localStorage.getItem("username") === ans.user.username ? (
+          <>
+            <Tooltip title="Edit" arrow>
+              <IconButton>
+                <Edit style={{ color: "green" }}onClick={()=>handleEditAnswer(ans.id, ans.solution)}/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete" arrow>
+              <IconButton>
+                <Delete style={{ color: "red" }} onClick={()=>deleteAnswer(ans.id)}/>
+              </IconButton>
+            </Tooltip>
+          </>
+        ):(
+          <>
         <Tooltip title="Report answer" arrow>
           <button className="mr-2" style={{ background: "none", border: "none", padding: "unset" }} onClick={() => handleOpenDialog(ans.id)}>
-            <Report style={{ color: "black" }} />
+            <Warning style={{ color: "black" }} />
           </button>
         </Tooltip><>Report</>
+        </>
+      )}
+
         {comments[ans.id] && (
           <div>
             {comments[ans.id].length > 0 && (
@@ -412,20 +553,20 @@ export default function Content(props) {
   };
 
   return (
-    <div Style="height:100vh; margin-top:13vh; z-index:1; background-color:white;margin-left:200px;padding-left:20px">
+    <div Style="margin-top:13vh; z-index:1; background-color:white;margin-left:200px;padding-left:20px">
           <div Style="height:100vh;width:70%;display:block;">
             <div className="d-flex flex-row">
               <div className="d-flex flex-column">
                 <div style={{color:"#0074CC",fontSize:"20px"}}>Title:<span style={{color:"black"}}>  {question.title}</span></div>
                 <div>
-                  <div style={{color:"#0074CC",fontSize:"20px"}}>Posted by:<span style={{color:"black"}}>  {author}</span></div>
+                  <div style={{color:"#0074CC",fontSize:"20px"}}>Posted by:<span style={{color:"black"}}>  {author == localStorage.getItem("username") ? "You" : author}</span></div>
                 </div>
-                <div style={{color:"#0074CC"}} className="mt-3">Description:</div>
-                <div>{question.description}</div>
+                <div style={{color:"#0074CC",fontSize:"20px"}} className="mt-3">Description:</div>
+                <div style={{fontSize:"20px"}}>{question.description}</div>
               </div>
             </div>
             <div className="mt-5">
-              {answers.length == 0 ? <div style={{ color:"#0074CC" }}>No Answers</div> : <></>}
+              {answers.length == 0 ? <div style={{ color:"#0074CC" }}>No Answer</div> : <></>}
               {answers.length == 1 ? <div style={{ color:"#0074CC" }}>1 Answer</div> : <></>}
               {answers.length > 1 ? <div style={{ color: "#0074CC" }}>{answers.length} Answers</div> : <></>}
             </div>
@@ -498,7 +639,7 @@ export default function Content(props) {
             )}
           </div>
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Report Question</DialogTitle>
+        <DialogTitle>Report Answer</DialogTitle>
         <DialogContent>
           <p>Select a reason for reporting:</p>
           <select onChange={(e) => setSelectedReason(e.target.value)}>
@@ -533,6 +674,42 @@ export default function Content(props) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openEditCommentDialog} onClose={() => setOpenEditCommentDialog(false)}>
+  <DialogTitle>Edit Comment</DialogTitle>
+  <DialogContent>
+    <input
+      type="text"
+      value={editCommentValue}
+      onChange={(e) => setEditCommentValue(e.target.value)}
+      style={{ width: "100%", border: "2px solid black", borderRadius: "5px" }}
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenEditCommentDialog(false)}>Cancel</Button>
+    <Button onClick={handleSubmitEdit} variant="contained" autoFocus>
+      Save
+    </Button>
+  </DialogActions>
+</Dialog>
+<Dialog open={openEditAnswerDialog} onClose={() => setOpenEditAnswerDialog(false)} fullWidth maxWidth="md">
+  <DialogTitle>Edit Answer</DialogTitle>
+  <DialogContent>
+    <textarea
+      rows={3}
+      value={editAnswerValue}
+      onChange={(e) => setEditAnswerValue(e.target.value)}
+      style={{ width: "100%", border: "2px solid black", borderRadius: "5px" }}
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenEditAnswerDialog(false)}>Cancel</Button>
+    <Button onClick={handleSubmitEditAnswer} variant="contained" autoFocus>
+      Save
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
     </div>
   );
 }

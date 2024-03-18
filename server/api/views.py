@@ -754,3 +754,17 @@ def deleteMyComment(request,pk):
     comment = Comment.objects.get(id=pk)
     comment.delete()
     return Response(status=200,data={"message": "Comment deleted successfully"})
+
+@api_view(["PUT"])
+def editComment(request,pk):
+    comment = Comment.objects.get(id=pk)
+    comment.comment = request.data.get("comment")
+    comment.save()
+    return Response(status=200,data={"message": "Comment updated successfully"})
+
+@api_view(["PUT"])
+def editAnswer(request,pk):
+    answer = Answer.objects.get(id=pk)
+    answer.solution = request.data.get("solution")
+    answer.save()
+    return Response(status=200,data={"message": "Answer updated successfully"})

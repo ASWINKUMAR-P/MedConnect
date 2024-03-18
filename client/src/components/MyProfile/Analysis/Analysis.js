@@ -241,7 +241,7 @@ export default function Analysis() {
                 <div className="d-flex flex-row">
                     <Chart title={"Your questions and percentage on used tags"} count={count} Tags={Tags} />
                     <Chart title={"Your answers and percentage on used tags"} count={Anscount} Tags={AnsTags} />
-                    <Chart title={"Your answers and percentage on used tags"} count={AcAnscount} Tags={AcAnsTags} />
+                    <Chart title={"Your accepted answers and used tags"} count={AcAnscount} Tags={AcAnsTags} />
                 </div>
             </div>
         </div>

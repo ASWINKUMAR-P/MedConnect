@@ -27,6 +27,7 @@ urlpatterns = [
     path('searchQuestions/', searchQuestions, name="searchQuestion"),
 
     path('addAnswer/<int:pk>/', addAnswer, name="addAnswer"),
+    path('editAnswer/<int:pk>/', editAnswer, name="editAnswer"),
     path('getAnswerByQuestionId/<int:pk>/', getAnswerById, name="getAnswerByQuestionId"),
     path('upvoteAnswer/<int:pk>/', upVoteAnswer, name="upvoteAnswer"),
     path('downvoteAnswer/<int:pk>/', downVoteAnswer, name="downvoteAnswer"),
@@ -61,6 +62,7 @@ urlpatterns = [
 
     path('getComments/<int:pk>/',getCommentsByAnswerId, name="getComments"),
     path('addComment/<int:pk>/',addComment, name="addComment"),
+    path('editComment/<int:pk>/',editComment, name="editComment"),
     path('deleteComment/<int:pk>/',deleteComment, name="deleteComment"),
     path('report/',report, name="report"),
 
