@@ -4,7 +4,7 @@ import parse from "html-react-parser";
 import axios from "axios";
 import "../../Questions/questions.css";
 import AdminSidebar from "../AdminSidebar";
-import Pagination from "../../MyProfile/MyQuestions/Pagination";
+import Pagination from "../../Questions/Pagination";
 import ProfileSidebar from "../AdminSidebar";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
@@ -156,9 +156,9 @@ export default function Adminquestion() {
                 Find All questions between :{" "}
               </strong>
               <input type="date" name="startDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
-              <strong Style="display:inline;font-size:20px">To</strong>
+              <strong Style="display:inline;font-size:20px">{" "}to{" "}</strong>
               <input type="date" name="endDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
-              <strong Style="display:inline;font-size:20px">and in tag:</strong>
+              <strong Style="display:inline;font-size:20px">{" "}and in tag:{" "}</strong>
               <select name="tags" onChange={onChange} style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}}>
                 <option value="" selected>
                   All tags

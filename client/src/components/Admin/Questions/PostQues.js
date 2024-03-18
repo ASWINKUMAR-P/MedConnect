@@ -62,7 +62,7 @@ export default function PostQues({questions}){
                   </div>
                   <div className="question-answer">
                       <div style={{ width: "90%" }}>
-                        <NavLink to={`/adminanswer/${question.id}`}>
+                        <NavLink to={`/adminanswer/${question.id}`} style={{textDecoration:"none"}}>
                           <div style={{fontSize:"20px",fontWeight:"bold"}}>Question: {question.title}</div></NavLink>
                           <div style={{fontSize:"15px"}}>{question.description}</div>
                           <div className="mt-3">

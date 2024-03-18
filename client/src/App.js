@@ -12,10 +12,6 @@ import UserQuestionContent from './components/MyProfile/Profile/Content';
 import AdminUser from './components/Admin/Users/user';
 import AdminUserProfile from './components/Admin/Users/UserProfile';
 import Chart from './components/charts/Chart';
-import MyQuestions from './components/MyProfile/MyQuestions/MyQuestions';
-import UpdateQuestion from './components/MyProfile/MyQuestions/UpdateQuestion';
-import UpdateAnswer from './components/MyProfile/MyAnswers/UpdateAnswer';
-import MyAnswers from './components/MyProfile/MyAnswers/MyAnswers';
 import Analysis from './components/MyProfile/Analysis/Analysis';
 import Tags from './components/Tags/Tags';
 import QuestionOnTags from './components/Tags/QuestionOnTags';
@@ -65,9 +61,6 @@ function App() {
           <Route path="/profile" element={<ShowProfile />} />
           <Route path="/edit" element={<EditProfile />} />
           <Route path="/upload" element={<UploadProof />}/>
-          <Route path="/myquestions" element={<MyQuestions />} />
-          <Route path="/updateque/:type" element={<UpdateQuestion />} />
-          <Route path="/myanswers" element={<MyAnswers />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/tags" element={<Tags />} />
           {/* admin routes */}
@@ -76,7 +69,6 @@ function App() {
           <Route path="/adminuser" element={<AdminUser />} />
           <Route path="/UserProfileAnalysis/:username" element={<UserProfileAnalysis />} />
           <Route path="/UserProfile/:username" element={<AdminUserProfile />} />
-          <Route path="/updateans/:type" element={<UpdateAnswer />} />
           <Route path="/viewRequests" element={<ViewRequests />} />
           <Route path="/view-documents/:requestId" element={<ViewDocs />} />
           {/* tags routers */}

@@ -1,4 +1,3 @@
-import '../../MyProfile/MyAnswers/postsAns.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import { MedicalServices } from "@mui/icons-material";

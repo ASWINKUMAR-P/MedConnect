@@ -79,13 +79,13 @@ export default function Adminanswer() {
             
             <div>
                 <div className='filters_menu'>
-                    <strong Style="display:inline;font-size:20px">Find answers between:</strong>
+                    <strong Style="display:inline;font-size:20px">Find answers between:{" "}</strong>
                     <input type="date" name="startDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
-                    <strong Style="display:inline;font-size:20px">to</strong>
+                    <strong Style="display:inline;font-size:20px">{" "}to{" "}</strong>
                     <input type="date" name="endDate" style={{padding: '8px 12px',border: '1px solid #ccc',borderRadius: '4px'}} onChange={onChange} />
-                    <input type="radio"  name="status" value="Accepted" onChange={onChange}/>
-                    <label for="accepted" style={{fontSize: '20px'}}>Accepted</label>
-                    <input type="radio" name="status" value="Not Accepted" onChange={onChange}/>
+                    <input type="radio"  name="status" value="Accepted" onChange={onChange} className='ml-2'/>
+                    <label for="accepted" style={{fontSize: '20px'}}>Accepted{" "}</label>
+                    <input type="radio" name="status" value="Not Accepted" onChange={onChange} className='ml-2'/>
                     <label for="notAccepted" style={{fontSize: '20px'}}>Not Accepted</label>
                 </div>
                 <div className="questions">
