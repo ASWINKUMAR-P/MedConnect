@@ -7,6 +7,7 @@ urlpatterns = [
     path('addquestion/', addQuestion, name="addquestion"),
 
     path('getQuestions/', getQuestions, name="getQuestions"),
+    path('editQuestion/<int:pk>', editQuestion, name="editQuestion"),
     path('getQuestionByHigherVotes/', getQuestionByHigherVotes, name="getQuestionByHigherVotes"),
     path('getQuestionById/<int:pk>/', getQuestionById, name="getQuestionById"),
     path('updateQuestionById/<int:pk>/', updateQuestionById, name="updateQuestionById"),
@@ -62,4 +63,8 @@ urlpatterns = [
     path('addComment/<int:pk>/',addComment, name="addComment"),
     path('deleteComment/<int:pk>/',deleteComment, name="deleteComment"),
     path('report/',report, name="report"),
+
+    path('deleteMyQuestion/<int:pk>/',deleteMyQuestion, name="deleteMyQuestion"),
+    path('deleteMyAnswer/<int:pk>/',deleteMyAnswer, name="deleteMyAnswer"),
+    path('deleteMyComment/<int:pk>/',deleteMyComment, name="deleteMyComment"),
 ]

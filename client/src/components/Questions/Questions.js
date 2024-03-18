@@ -3,6 +3,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import Posts from './Posts';
 import Pagination from './Pagination';
 import './questions.css';
+import { Delete,Edit } from '@mui/icons-material';
 
 export default function Questions() {
 

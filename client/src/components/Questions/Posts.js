@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { Report } from '@mui/icons-material';
+import { Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, TextField } from '@mui/material';
+import { Report, Delete, Edit, Warning } from '@mui/icons-material';
 import './questions.css';
 
 export default function Posts({ posts }) {
-    const [noOfAns, setnoOfAns] = useState({});
+    const [noOfAns, setNoOfAns] = useState({});
     const [vote, setVotes] = useState({});
     const [openDialog, setOpenDialog] = useState(false); // State to manage dialog open/close
     const [selectedReason, setSelectedReason] = useState(""); // State to store selected report reason
     const [selectedQuestionId, setSelectedQuestionId] = useState(""); // State to store the ID of the selected question
+    const [editQuestion, setEditQuestion] = useState(null); // State to hold edited question data
 
     // Array of report reasons
     const reportReasons = [
@@ -32,8 +33,7 @@ export default function Posts({ posts }) {
             }
         });
         const json = await response.json();
-        setnoOfAns(json);
-        console.log(json);
+        setNoOfAns(json);
     }
 
     const fetchVotes = async () => {
@@ -60,7 +60,7 @@ export default function Posts({ posts }) {
 
     const handleCloseDialog = (reason) => {
         setOpenDialog(false);
-        if(reason === "") {
+        if (reason === "") {
             alert('Please select a reason for reporting the question.');
             return;
         }
@@ -88,6 +88,52 @@ export default function Posts({ posts }) {
         });
     };
 
+    const handleEditDialogOpen = (questionId) => {
+        const questionToEdit = posts.find(question => question.id === questionId);
+        setEditQuestion(questionToEdit);
+        setOpenDialog(true);
+    };
+
+    const handleEditDialogClose = () => {
+        setEditQuestion(null);
+        setOpenDialog(false);
+    };
+
+    const handleEditSubmit = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/editQuestion/${editQuestion.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(editQuestion),
+            });
+
+            const data = await response.json();
+            alert(data.message); // Display response message
+            handleEditDialogClose(); // Close the dialog
+            window.location.reload(); // Reload the page
+        } catch (error) {
+            console.error('Error editing question:', error);
+            alert('An error occurred while editing the question.');
+        }
+    };
+
+    const deleteMyQuestion = async (id) => {
+        await fetch(`http://localhost:8000/api/deleteQuestionById/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        .then((response) => {
+            console.log(response);
+            window.location.reload();
+            alert("Question Deleted Successfully");
+        });
+    }
+
     return (
         <>
             <ul>
@@ -104,7 +150,29 @@ export default function Posts({ posts }) {
                                         )}
                                         <span>Answers</span>
                                     </div>
-                                    <div className="all-option">
+                                    <div className="all-option d-flex flex-row justify-content-center">
+                                        {question.user.username === localStorage.getItem('username') ? (
+                                            <>
+                                                {/* Edit button */}
+                                                <Tooltip title="Edit" arrow>
+                                                    <IconButton onClick={() => handleEditDialogOpen(question.id)}>
+                                                        <Edit style={{ color: "green" }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                {/* Delete button */}
+                                                <Tooltip title="Delete" arrow>
+                                                    <IconButton onClick={() => deleteMyQuestion(question.id)}>
+                                                        <Delete style={{ color: "red" }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </>
+                                        ) : (
+                                            <Tooltip title="Report" arrow>
+                                                <IconButton onClick={() => handleOpenDialog(question.id)}>
+                                                    <Warning style={{ color: "black" }}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -114,16 +182,8 @@ export default function Posts({ posts }) {
                                     <div>{question.description}</div>
                                 </div>
                                 <div className='mt-3'>{question.tags.map((tag, index) => <NavLink key={index} to={{ pathname: `/questionOntags/${tag.name}` }} className='question-tags' Style="text-decoration:none; color:hsl(205,47%,42%); background-color: hsl(205,46%,92%); border-radius:5px;">{tag.name}</NavLink>)}</div>
-                                <Tooltip title="Report question" className='mt-2' style={{ width: "fit-content" }} arrow>
-                                    <div className='d-flex'>
-                                        <button className="mr-2 mt-2 d-flex" style={{ background: "none", border: "none", padding: "unset", width: "fit-content" }} onClick={() => handleOpenDialog(question.id)}>
-                                            <Report style={{ color: "black" }} />
-                                        </button>
-                                        <div className='d-flex mt-2'>Report question</div>
-                                    </div>
-                                </Tooltip>
                                 <div className="author">
-                                    <small className='d-flex flex-row-reverse mr-5'>{question.user.username} asked this at {question.created_at} </small>
+                                    <small className='d-flex flex-row-reverse mr-5'>{question.user.username===localStorage.getItem("username")?"You" : question.user.username} asked this at {question.created_at} </small>
                                 </div>
                             </div>
                         </div>
@@ -132,20 +192,74 @@ export default function Posts({ posts }) {
             </ul>
 
             {/* Dialog component */}
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Report Question</DialogTitle>
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md">
+                <DialogTitle>{editQuestion ? 'Edit Question' : 'Report Question'}</DialogTitle>
                 <DialogContent>
-                    <p>Select a reason for reporting:</p>
-                    <select onChange={(e) => setSelectedReason(e.target.value)}>
-                        <option value="">Select reason...</option>
-                        {reportReasons.map((reason, index) => (
-                            <option key={index} value={reason}>{reason}</option>
-                        ))}
-                    </select>
-                </DialogContent>
+    {editQuestion ? (
+        <div>
+            <TextField
+                label="Title"
+                fullWidth
+                value={editQuestion.title}
+                onChange={(e) => setEditQuestion({ ...editQuestion, title: e.target.value })}
+                variant="outlined"
+                margin="normal"
+            />
+            <TextField
+                label="Description"
+                fullWidth
+                multiline
+                rows={4}
+                value={editQuestion.description}
+                onChange={(e) => setEditQuestion({ ...editQuestion, description: e.target.value })}
+                variant="outlined"
+                margin="normal"
+            />
+            <div className="form-group">
+                <label htmlFor="tags">Tags</label>
+                <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                    {editQuestion.tags.map((tag, index) => (
+                        <span key={index} className="badge bg-secondary me-1" style={{ margin: "3px", padding: "5px" }}>
+                            {tag.name}
+                        </span>
+                    ))}
+                </div>
+                <input
+                    type="text"
+                    name="tags"
+                    value={editQuestion.tags.map(tag => tag.name).join(' ')}
+                    onChange={(e) => setEditQuestion({ ...editQuestion, tags: e.target.value.split(' ').map(name => ({ name })) })}
+                    className="form-control"
+                    id="exampleInputEmail1"
+                    aria-describedby="emailHelp"
+                    placeholder="Enter Tags"
+                />
+                <small id="emailHelp" className="form-text text-muted">
+                    Enter the Tags and separate them by space
+                </small>
+            </div>
+        </div>
+    ) : (
+        <div>
+            <p>Select a reason for reporting:</p>
+            <select onChange={(e) => setSelectedReason(e.target.value)}>
+                <option value="">Select reason...</option>
+                {reportReasons.map((reason, index) => (
+                    <option key={index} value={reason}>{reason}</option>
+                ))}
+            </select>
+        </div>
+    )}
+</DialogContent>
+ 
+
                 <DialogActions>
                     <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-                    <Button onClick={() => handleCloseDialog(selectedReason)}>Report</Button>
+                    {editQuestion ? (
+                        <Button onClick={handleEditSubmit}>Save</Button>
+                    ) : (
+                        <Button onClick={() => handleCloseDialog(selectedReason)}>Report</Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </>

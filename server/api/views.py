@@ -127,6 +127,30 @@ def getQuestions(request):
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
 
+@api_view(["PUT"])
+def editQuestion(request, pk):
+    question = Question.objects.get(id=pk)
+    title = request.data.get("title")
+    description = request.data.get("description")
+    question.title = title
+    question.description = description
+    #clear all tags from the tags table if not used by other questions
+    question.tags.clear()
+    #remove the usual tags that are not used by any question
+    tags = Tags.objects.all()
+    questions = Question.objects.all()
+    for tag in tags:
+        if not questions.filter(tags=tag):
+            tag.delete()
+    tags = request.data.get("tags")
+    for tag_name in tags:
+        print(tag_name)
+        tag, created = Tags.objects.get_or_create(name=tag_name["name"])
+        question.tags.add(tag)
+    question.updated_at = datetime.datetime.now()
+    question.save()
+    return Response(status=200,data={"message": "Question updated successfully"})
+
 @api_view(["GET"])
 def getQuestionByHigherVotes(request):
     questions = Question.objects.all().order_by("-votes")
@@ -713,3 +737,20 @@ def deleteComment(request,pk):
     comment.delete()
     return Response(status=200,data={"message": "Comment deleted successfully"})
 
+@api_view(["DELETE"])
+def deleteMyQuestion(request,pk):
+    question = Question.objects.get(id=pk)
+    question.delete()
+    return Response(status=200,data={"message": "Question deleted successfully"})
+
+@api_view(["DELETE"])
+def deleteMyAnswer(request,pk):
+    answer = Answer.objects.get(id=pk)
+    answer.delete()
+    return Response(status=200,data={"message": "Answer deleted successfully"})
+
+@api_view(["DELETE"])
+def deleteMyComment(request,pk):
+    comment = Comment.objects.get(id=pk)
+    comment.delete()
+    return Response(status=200,data={"message": "Comment deleted successfully"})
