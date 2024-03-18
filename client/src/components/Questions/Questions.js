@@ -20,12 +20,15 @@ export default function Questions() {
             apiUrl = `http://localhost:8000/api/searchAnswered?keyword=${searchQuery}`;
         } else if (activeTab === 'unanswered') {
             apiUrl = `http://localhost:8000/api/searchUnanswered?keyword=${searchQuery}`;
+        } else if (activeTab === 'myquestions') { // New condition for 'myquestions' tab
+            apiUrl = `http://localhost:8000/api/searchMyQuestions?keyword=${searchQuery}`;
         }
 
         await fetch(apiUrl, {
             method: "GET",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token')}`
             }
         }).then(response => {
             return response.json();
@@ -55,30 +58,37 @@ export default function Questions() {
         <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white",marginLeft:"250px" }}>
             <div className="main-container">
                 <div className='md-5'>
-                    <div className="d-flex" style={{ width: 500 }}>
-                    <input className="form-control me-2" id="searchQue" type="search" placeholder="Search" aria-label="Search" value={searchQuery} onChange={handleSearchInputChange}/>
-                    <div className="main-filter">
-                        <div className="main-tabs">
-                        <button
-                        className={`main-tab ${activeTab === 'all' ? 'active' : ''}`}
-                        onClick={() => handleTabClick('all')}
-                        >
-                            All
-                        </button>
-                        <button
-                            className={`main-tab ${activeTab === 'answered' ? 'active' : ''}`}
-                            onClick={() => handleTabClick('answered')}
-                        >
-                            Answered
-                        </button>
-                        <button
-                            className={`main-tab ${activeTab === 'unanswered' ? 'active' : ''}`}
-                            onClick={() => handleTabClick('unanswered')}
-                        >
-                            Unanswered
-                        </button>
+                    <div className="d-flex" style={{ width: 800 }}>
+                        <input className="form-control me-2" id="searchQue" type="search" placeholder="Search" aria-label="Search" value={searchQuery} onChange={handleSearchInputChange}/>
+                        <div className="main-filter">
+                            <div className="main-tabs d-flex">
+                                <button
+                                    className={`main-tab ${activeTab === 'all' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('all')}
+                                >
+                                    All
+                                </button>
+                                <button
+                                    className={`main-tab ${activeTab === 'answered' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('answered')}
+                                >
+                                    Answered
+                                </button>
+                                <button
+                                    className={`main-tab ${activeTab === 'unanswered' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('unanswered')}
+                                >
+                                    Unanswered
+                                </button>
+                                <button
+                                    className={`main-tab ${activeTab === 'myquestions' ? 'active' : ''}`}
+                                    onClick={() => handleTabClick('myquestions')}
+                                >
+                                    My Questions 
+                                </button>
+                            </div>
                         </div>
-                    </div></div>
+                    </div>
                 </div>
                 <div className='main-desc'>
                     <p>{questions.length} Questions</p>

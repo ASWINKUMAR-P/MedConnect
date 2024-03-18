@@ -33,6 +33,7 @@ button{
     outline: none;
     border-radius: 3px;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .main-desc{

@@ -522,6 +522,20 @@ def searchUnanswered(request):
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
 
+@api_view(["GET"])
+def searchMyQuestions(request):
+    keyword = request.query_params.get("keyword")
+    user = request.user
+    questions = Question.objects.filter(user=user)
+    if keyword == "":
+        return Response(status=200,data=QuestionSerializer(questions, many=True).data)
+    questions = Question.objects.filter(title__icontains=keyword, user=user)
+    tags = Tags.objects.filter(name__icontains=keyword)
+    for tag in tags:
+        questions = questions | Question.objects.filter(tags=tag, user=user)
+    serializer = QuestionSerializer(questions, many=True)
+    return Response(status=200,data=serializer.data)
+
 @api_view(["POST"])
 def uploadProof(request):
     user = request.user

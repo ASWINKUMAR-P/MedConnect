@@ -43,6 +43,7 @@ urlpatterns = [
     path('search/', search, name="search"),
     path('searchUnanswered/', searchUnanswered, name="searchUnanswered"),
     path('searchAnswered/', searchAnswered, name="searchAnswered"),
+    path('searchMyQuestions/', searchMyQuestions, name="searchMyQuestions"),
     path('deleteAnswer/<int:pk>/', deleteAnswer, name="deleteAnswer"),
     
     path('uploadProof/', uploadProof, name="uploadProof"),
