@@ -139,6 +139,7 @@ def addQuestion(request):
 
 @api_view(["GET"])
 def getQuestions(request):
+    #return all questions in descending order of created_at
     questions = Question.objects.all().order_by("-created_at")
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
@@ -542,6 +543,7 @@ def searchAnswered(request):
     questions = questions.filter(id__in=[a.question.id for a in answer])
     questions = questions.distinct()
     serializer = QuestionSerializer(questions, many=True)
+    questions = questions.order_by("-created_at")
     return Response(status=200,data=serializer.data)
 
 @api_view(["GET"])
@@ -559,6 +561,8 @@ def searchUnanswered(request):
     answer = Answer.objects.all()
     questions = questions.exclude(id__in=[a.question.id for a in answer])
     questions = questions.distinct()
+    #sort questions based on created_at in descending order
+    questions = questions.order_by("-created_at")
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
 
@@ -574,6 +578,7 @@ def searchMyQuestions(request):
     for tag in tags:
         questions = questions | Question.objects.filter(tags=tag, user=user)
     serializer = QuestionSerializer(questions, many=True)
+    questions = questions.order_by("-created_at")
     return Response(status=200,data=serializer.data)
 
 @api_view(["POST"])
