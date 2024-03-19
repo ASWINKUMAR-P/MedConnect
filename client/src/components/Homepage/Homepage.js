@@ -21,6 +21,7 @@ function Homepage() {
         else if(localStorage.getItem('usertype') === 'user'){
             navigate('/questions')
         }
+        console.log(localStorage.getItem('usertype'));
     }
     
     useEffect(() => {

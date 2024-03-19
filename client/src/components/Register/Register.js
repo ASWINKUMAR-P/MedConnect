@@ -32,9 +32,9 @@ function Register() {
       setState(true);
       localStorage.setItem('username', json.username);
       localStorage.setItem('token', json.token);
-      localStorage.setItem('userType', "user");
+      localStorage.setItem('usertype', "user");
       alert("User Created Successfully")
-      navigate("/");
+      navigate("/questions");
       window.location.reload(true);
     }
     else {

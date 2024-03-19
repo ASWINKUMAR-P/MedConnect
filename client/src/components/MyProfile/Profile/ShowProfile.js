@@ -5,11 +5,11 @@ import Sidebar from "../../Sidebar/Sidebar";
 import "../../Sidebar/Sidebar.css";
 import userimg from "./profile.png";
 import doctorimg from "./doctor.png";
+import Authenticate from "../../../Authenticate";
 
 export default function ShowProfile() {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
-
   const fetchUser = async () => {
     await fetch(`http://localhost:8000/api/getProfile`, {
       method: "GET",
@@ -21,7 +21,9 @@ export default function ShowProfile() {
       .then((response) => {
         return response.json();
       })
-      .then((data) => setUser(data));
+      .then((data) => {
+        setUser(data);
+      });
   };
 
   useEffect(() => {

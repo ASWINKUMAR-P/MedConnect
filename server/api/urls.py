@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import *
 urlpatterns = [
+    path('verify/', verifyUser, name="verify"),
     path('login/', login, name="login"),
     path('register/', register, name="register"),
     path('addquestion/', addQuestion, name="addquestion"),
-
     path('getQuestions/', getQuestions, name="getQuestions"),
     path('editQuestion/<int:pk>', editQuestion, name="editQuestion"),
     path('getQuestionByHigherVotes/', getQuestionByHigherVotes, name="getQuestionByHigherVotes"),

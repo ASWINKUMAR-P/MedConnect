@@ -1,10 +1,11 @@
 // Profile.jsx
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./profile.css";
 import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
+  const navigate = useNavigate();
   const [credentials, setCredentials] = useState({ name: "", email: "", password: "" })
 
   const onChange = (e) => {
@@ -38,6 +39,7 @@ export default function EditProfile() {
       alert(json.error);
     }
   }
+
 
   return (
     <div className="main-part" style={{ height: "100%", marginTop: "13vh", zIndex: 1, backgroundColor: "white" }}>

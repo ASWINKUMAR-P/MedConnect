@@ -57,6 +57,22 @@ def getUserByUsername(request, username):
     }
     return Response(status=200,data=data)
 
+@api_view(["GET"])
+def verifyUser(request):
+    try:
+        user = request.user
+        if user.is_superuser:
+            type="admin"
+        else:
+            type="user"
+        data = {
+            "username": user.username,
+            "type": type,
+        }
+        return Response(status=200,data=data)
+    except Exception as e:
+        return Response(status=400,data={"error": "User not found"})
+
 @api_view(["POST"])
 def login(request):
     email = request.data.get("email")
