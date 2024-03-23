@@ -38,6 +38,7 @@ export default function AdminUser() {
 
 
   const deleteUser = async (id) => {
+    console.log(id);
     await fetch(`http://localhost:8000/api/deleteProfile/${id}`,{
       method: "DELETE",
       headers: {

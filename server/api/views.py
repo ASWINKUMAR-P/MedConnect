@@ -457,6 +457,7 @@ def getAllProfile(request):
         tags = list(set(tags))
         tagsCount = len(tags)
         data = {
+            "id": user.id,
             "username": user.username,
             "email": user.email,
             "questions": questions.count(),
