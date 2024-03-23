@@ -73,7 +73,7 @@ class Report(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.SET_NULL, null=True)
     comment = models.ForeignKey(Comment, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    accepted = models.BooleanField(default=False)
+    accepted = models.CharField(max_length=255, choices=[('pending', 'pending'), ('accepted', 'accepted'), ('rejected', 'rejected')], default='pending')
     
     def __str__(self):
         return self.user.username
