@@ -518,12 +518,15 @@ def search(request):
     keyword = request.query_params.get("keyword")
     if keyword == "":
         questions = Question.objects.all()
+        questions = questions.order_by("-created_at")
         return Response(status=200,data=QuestionSerializer(questions, many=True).data)
     questions = Question.objects.filter(title__icontains=keyword)
     tags = Tags.objects.filter(name__icontains=keyword)
     for tag in tags:
         questions = questions | Question.objects.filter(tags=tag)
     questions = questions.distinct()
+    #sort questions based on created_at in descending order
+    questions = questions.order_by("-created_at")
     serializer = QuestionSerializer(questions, many=True)
     return Response(status=200,data=serializer.data)
 
@@ -534,6 +537,7 @@ def searchAnswered(request):
         questions = Question.objects.all()
         answer = Answer.objects.all()
         questions = questions.filter(id__in=[a.question.id for a in answer])
+        questions = questions.order_by("-created_at")
         return Response(status=200,data=QuestionSerializer(questions, many=True).data)
     questions = Question.objects.filter(title__icontains=keyword)
     tags = Tags.objects.filter(name__icontains=keyword)
@@ -553,6 +557,7 @@ def searchUnanswered(request):
         questions = Question.objects.all()
         answer = Answer.objects.all()
         questions = questions.exclude(id__in=[a.question.id for a in answer])
+        questions = questions.order_by("-created_at")
         return Response(status=200,data=QuestionSerializer(questions, many=True).data)
     questions = Question.objects.filter(title__icontains=keyword)
     tags = Tags.objects.filter(name__icontains=keyword)
